@@ -1,0 +1,25 @@
+# Third-party firmware repos — fetched and pinned by setup.sh, not vendored.
+# See README.md "Reproducing this pilot" for the exact commits.
+firmware/libopencm3/
+firmware/libopencm3-examples/
+
+# Build artifacts (produced by `make` inside any example directory)
+*.o
+*.elf
+*.map
+*.d
+*.bin
+*.hex
+
+# Local toolchain/emulator installs, if someone points them into this repo
+arm-gnu-toolchain/
+
+# Python (only used to regenerate pilot/figure.png)
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# OS cruft
+.DS_Store
+Thumbs.db

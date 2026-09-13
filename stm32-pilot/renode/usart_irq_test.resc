@@ -1,0 +1,41 @@
+:name: STM32F4 usart_irq dynamic test
+:description: Loads the usart_irq firmware under test and bridges USART2 to a TCP socket for byte-level echo verification.
+
+# Run this with:
+#   renode --disable-gui -P 4567 usart_irq_test.resc &
+# Then, from another terminal:
+#   python3 echo_test.py
+#
+# -P 4567 puts Renode's own monitor console on a TCP port instead of an
+# interactive prompt attached to this shell's stdin — without it, Renode
+# exits immediately when run in the background (no terminal to read from).
+# --disable-gui skips the GUI entirely, which this headless test doesn't need.
+
+using sysbus
+mach create "usart_irq_test"
+
+# stm32f4_discovery.repl ships with Renode itself (Antmicro's official
+# platform description for the real ST STM32F4-Discovery board). It defines
+# a genuine, non-stub USART2 peripheral wired to the NVIC, and real GPIO
+# port models — unlike QEMU's equivalent, whose GPIOD is an
+# "unimplemented-device" stub (see recon/PLATFORM.md for how that was found).
+machine LoadPlatformDescription @platforms/boards/stm32f4_discovery.repl
+
+# Absolute path to the actual compiled firmware under test. Re-seed a defect,
+# rebuild (see setup.sh's printed rebuild command), and this same script
+# picks up the new .elf automatically on the next Renode run — no edit needed
+# here unless the firmware moves to a different path.
+$elf?=@/Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.elf
+
+sysbus LoadELF $elf
+
+# Exposes USART2's serial traffic as a plain TCP socket on port 3456. Once
+# this is running, anything that can open a TCP connection (this pilot uses
+# echo_test.py) can send/receive bytes exactly as if it had a real serial
+# cable connected to the chip's UART pins.
+emulation CreateServerSocketTerminal 3456 "uart_bridge" false
+connector Connect sysbus.usart2 uart_bridge
+
+# Actually starts CPU execution — without this, the ELF is loaded but the
+# emulated core never runs, and nothing would ever respond on the socket.
+start

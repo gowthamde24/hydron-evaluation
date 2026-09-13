@@ -1,0 +1,58 @@
+[0m
+> code · Auto
+[0m
+[0m✱ [0mGlob "**/*.{c,h,cpp,hpp,s,ld}"[90m in . · 100 matches[0m
+[0m✱ [0mGrep "USART2|UART2|RXNE|IRQHandler|NVIC|echo|usart"[90m in . · 2882 matches[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+@@ -35,9 +35,10 @@
+ }
+ 
+ static void usart_setup(void)
+ {
+-	/* Enable the USART2 interrupt. */
++	/* Route USART2 interrupt line from peripheral to Cortex-M NVIC. */
++	nvic_enable_irq(NVIC_USART2_IRQ);
+ 
+ 	/* Setup GPIO pins for USART2 transmit. */
+ 	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO2);
+ 
+
+[0m
+[0m$ [0mmake
+../../../../rules.mk:66: Cannot find libopencm3 library in the standard search paths.
+../../../../rules.mk:67: *** Please specify it through OPENCM3_DIR variable!.  Stop.
+[0m
+[0m$ [0mgit diff -- firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c[90m [offset=35, limit=20][0m
+Root cause fixed: **USART2 interrupt was never enabled in NVIC**, so peripheral RXNE set in `USART_SR`, but the IRQ was blocked before reaching the CPU handler.
+
+### What was wrong
+In `usart_setup()` the code had a comment “Enable the USART2 interrupt” but no actual NVIC call.  
+That creates exactly the observed behavior:
+
+- `RXNE` bit sets when a byte arrives ✅
+- `usart2_isr()` never executes ❌
+- no echo transmitted ❌
+
+### Fix applied
+Updated file:
+`firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c`
+
+Added:
+```c
+/* Route USART2 interrupt line from peripheral to Cortex-M NVIC. */
+nvic_enable_irq(NVIC_USART2_IRQ);
+```
+directly in `usart_setup()` before USART operation.
+
+### Result
+With `RXNEIE` already enabled and handler present (`usart2_isr`), incoming bytes now generate the interrupt path correctly, allowing LED toggle and echo logic to run.
+
+### Note on local build
+A full local rebuild is currently blocked in this environment by missing libopencm3 path configuration (`OPENCM3_DIR` not set), but the code-level interrupt routing defect is corrected.

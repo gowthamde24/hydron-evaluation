@@ -1,0 +1,64 @@
+[0m
+> code · Auto
+[0m
+[0m✱ [0mGlob "**/usart_irq/*"[90m in . · 16 matches[0m
+[0m✱ [0mGrep "NVIC_USART2_IRQ|nvic_enable_irq"[90m in . · 62 matches[0m
+[0m
+[0m$ [0mgit status --short
+?? ../Rosbot_manipulation.docx
+?? ../firmware/
+?? ../pilot/
+?? ../recon/
+?? ./
+[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c.bak
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+@@ -21,8 +21,9 @@
+ 
+ #include <libopencm3/stm32/rcc.h>
+ #include <libopencm3/stm32/gpio.h>
+ #include <libopencm3/stm32/usart.h>
++#include <libopencm3/cm3/nvic.h>
+ 
+ static void clock_setup(void)
+ {
+ 	/* Enable GPIOD clock for LED & USARTs. */
+
+[0m
+[0m$ [0mmake OPENCM3_DIR=../../../../../../libopencm3
+In file included from ../../../../../../libopencm3/include/libopencm3/cm3/common.h:63,
+                 from ../../../../../../libopencm3/include/libopencm3/stm32/rcc.h:20,
+                 from usart_irq.c:22:
+/opt/homebrew/Cellar/arm-none-eabi-gcc/16.2.0/lib/gcc/arm-none-eabi/16.2.0/include/stdint.h:11:16: fatal error: stdint.h: No such file or directory
+   11 | # include_next <stdint.h>
+      |                ^~~~~~~~~~
+compilation terminated.
+make: *** [usart_irq.o] Error 1
+[0m
+[0m$ [0mgit diff -- firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c[90m [offset=20, limit=12][0m
+[0m
+[0m$ [0mgit status --short -- firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c.bak
+Root cause found and fixed in the source:
+
+- File: `firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c`
+- Issue: the NVIC header include was missing, so both `nvic_enable_irq()` and `NVIC_USART2_IRQ` were undeclared.
+- Fix applied: restored the missing include:
+  ```c
+  #include <libopencm3/cm3/nvic.h>
+  ```
+
+Why it “built before”:
+- There is a `usart_irq.c.bak` in the same folder that still contains this include, which indicates the active `usart_irq.c` was modified at some point and lost the NVIC include.
+
+Build status after fix:
+- The previous NVIC undeclared root cause is resolved in code.
+- Current build in this environment now stops earlier with:
+  - `fatal error: stdint.h: No such file or directory`
+- That is a separate toolchain/sysroot setup issue (`arm-none-eabi-gcc` standard headers), not a libopencm3 example source issue.

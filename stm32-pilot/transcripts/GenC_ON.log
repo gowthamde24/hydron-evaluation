@@ -1,0 +1,244 @@
+[0m
+> code · Auto
+[0m
+[0m✱ [0mGlob "**/*RM*.pdf"[90m in . · 1 match[0m
+[0m→ [0mRead references/RM0090.pdf
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c[90m [offset=40, limit=30][0m
+[0m
+[0m$ [0mpdftotext "/Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/references/RM0090.pdf" - | rg -n "USARTDIV|BRR|baud rate|OVER8|fraction"
+zsh:1: command not found: rg
+[0m
+[0m$ [0mpdftotext "/Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/references/RM0090.pdf" - | /usr/bin/grep -n -E "USARTDIV|BRR|OVER8|baud rate generation|fraction"
+2657:Fractional baud rate generation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 755
+2706:Baud rate register (USART_BRR) . . . . . . . . . . . . . . . . . . . . . . . . . . . . 785
+4093:USART receiver’s tolerance when DIV fraction is 0 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 765
+12483:BRR
+12547:the application must wait that the Backup Regulator Ready flag (BRR) is set to indicate that
+12570:Bit 3 BRR: Backup regulator ready
+12649:BRR
+12769:BRR
+90735:RTC can then be adjusted to eliminate this offset by “shifting” its clock by a fraction of a
+90751:time subtracting a fraction of second, so this will advance the clock.
+93266:SS[15:0] is the value in the synchronous prescaler’s counter. The fraction of a second is
+93268:Second fraction = ( PREDIV_S - SS ) / ( PREDIV_S + 1 )
+93425:effectively add a fraction of a second to the clock in an atomic operation.
+93427:Bits 14:0 SUBFS: Subtract a fraction of a second
+93433:A fraction of a second can effectively be added to the clock (advancing the clock) when the
+108037:using a fractional baud rate generator.
+108270:This interface uses a fractional baud rate generator - with a 12-bit mantissa and 4-bit
+108271:fraction
+108283:A baud rate register (USART_BRR) - 12-bit mantissa and 4-bit fraction.
+108420:USART_BRR
+108423:OVER8
+108428:/ [8 x (2 - OVER8)]
+108435:/USARTDIV
+108457:USARTDIV = DIV_Mantissa + (DIV_Fraction / 8 × (2 – OVER8))
+108808:Select the desired baud rate using the USART_BRR register.
+109129:Select the desired baud rate using the baud rate register USART_BRR
+109236:The oversampling method can be selected by programming the OVER8 bit in the
+109242:select oversampling by 8 (OVER8=1) to achieve higher speed (up to fPCLK/8). In this
+109248:select oversampling by 16 (OVER8=0) to increase the tolerance of the receiver to clock
+109295:the OVER8 bit is forced to ‘0 by hardware.
+109504:Fractional baud rate generation
+109506:programmed in the Mantissa and Fraction values of USARTDIV.
+109509:Tx/Rx baud = ---------------------------------------------------------------------------------8 × ( 2 – OVER8 ) × USARTDIV
+109513:Tx/Rx baud = --------------------------------------------16 × USARTDIV
+109515:USARTDIV is an unsigned fixed point number that is coded on the USART_BRR register.
+109521:When OVER8=0, the fractional part is coded on 4 bits and programmed by the
+109522:DIV_fraction[3:0] bits in the USART_BRR register
+109526:When OVER8=1, the fractional part is coded on 3 bits and programmed by the
+109527:DIV_fraction[2:0] bits in the USART_BRR register, and bit DIV_fraction[3] must be kept
+109531:to USART_BRR. Hence the baud rate register value should not be changed during
+109534:How to derive USARTDIV from USART_BRR register values when OVER8=0
+109536:If DIV_Mantissa = 0d27 and DIV_Fraction = 0d12 (USART_BRR = 0x1BC), then
+109537:Mantissa (USARTDIV) = 0d27
+109538:Fraction (USARTDIV) = 12/16 = 0d0.75
+109539:Therefore USARTDIV = 0d27.75
+109542:To program USARTDIV = 0d25.62
+109547:Then, USART_BRR = 0x19A hence USARTDIV = 0d25.625
+109550:To program USARTDIV = 0d50.99
+109564:Then, USART_BRR = 0x330 hence USARTDIV = 0d51.000
+109566:How to derive USARTDIV from USART_BRR register values when OVER8=1
+109568:If DIV_Mantissa = 0x27 and DIV_Fraction[2:0]= 0d6 (USART_BRR = 0x1B6), then
+109569:Mantissa (USARTDIV) = 0d27
+109570:Fraction (USARTDIV) = 6/8 = 0d0.75
+109571:Therefore USARTDIV = 0d27.75
+109573:To program USARTDIV = 0d25.62
+109578:Then, USART_BRR = 0x195 => USARTDIV = 0d25.625
+109580:To program USARTDIV = 0d50.99
+109586:Then, USART_BRR = 0x0330 => USARTDIV = 0d51.000
+109589:Oversampling by 16 (OVER8=0)
+109692:Oversampling by 16 (OVER8=0)
+109848:Oversampling by 8 (OVER8 = 1)
+110049:Oversampling by 8 (OVER8 = 1)
+110117:Oversampling by 16 (OVER8 = 0)
+110349:Oversampling by 8 (OVER8=1)
+110574:Oversampling by 16 (OVER8=0)
+110736:Oversampling by 16 (OVER8=0)
+110877:Oversampling by 8 (OVER8=1)
+111131:Oversampling by 16 (OVER8=0)
+111367:Oversampling by 8 (OVER8=1)
+111435:Oversampling by 8 (OVER8=1)
+111666:Oversampling by 16 (OVER8=0)
+111815:Oversampling by 16 (OVER8=0)
+112025:Oversampling by 8 (OVER8=1)
+112205:Oversampling by 8 (OVER8=1)
+112413:oversampling by 8 or 16 defined by the OVER8 bit in the USART_CR1 register
+112417:use of fractional baud rate or not
+112432:Table 118. USART receiver’s tolerance when DIV fraction is 0
+112433:OVER8 bit = 0
+112435:OVER8 bit = 1
+112467:OVER8 bit = 0
+112469:OVER8 bit = 1
+114580:Baud rate register (USART_BRR)
+114688:Bits 15:4 DIV_Mantissa[11:0]: mantissa of USARTDIV
+114689:These 12 bits define the mantissa of the USART Divider (USARTDIV)
+114690:Bits 3:0 DIV_Fraction[3:0]: fraction of USARTDIV
+114691:These 4 bits define the fraction of the USART Divider (USARTDIV). When OVER8=1, the
+114757:OVER8
+114827:Bit 15 OVER8: Oversampling mode
+114831:SCEN=1,IREN=1 or LINEN=1 then OVER8 is forced to ‘0 by hardware.
+115739:OVER8
+115766:USART_BRR
+197121:USART_BRR . . . . . . . . . . . . . . . . . . . . . . . . . 785
+[0m
+[0m$ [0mpython3 -c "import subprocess; txt=subprocess.check_output(['pdftotext','/Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/references/RM0090.pdf','-']).decode('utf-8','ignore').splitlines(); start=109490; end=109525; [print(f'{i+1}:{txt[i]}') for i in range(start-1,end)]"
+109490:Bit3
+109491:
+109492:Bit4
+109493:
+109494:Bit5
+109495:
+109496:Bit6
+109497:
+109498:Possible
+109499:Parity
+109500:Bit
+109501:
+109502:Data frame
+109503:Bit1
+109504:
+109505:Bit2
+109506:
+109507:Bit7
+109508:
+109509:Bit3
+109510:
+109511:Bit4
+109512:
+109513:Bit5
+109514:
+109515:Bit6
+109516:
+109517:Bit7
+109518:
+109519:Next data frame
+109520:2 Stop
+109521:Bits
+109522:
+109523:Next
+109524:Start
+109525:Bit
+[0m
+[0m$ [0mpython3 -c "import subprocess; t=subprocess.check_output(['pdftotext','-layout','/Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/references/RM0090.pdf','-']).decode('utf-8','ignore'); s='Fractional baud rate generation'; i=t.find(s); print('idx',i); print(t[i:i+1400])"
+idx 95466
+Fractional baud rate generation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 755
+                   26.3.5       USART receiver tolerance to clock deviation . . . . . . . . . . . . . . . . . . . . 764
+                   26.3.6       Multiprocessor communication . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 765
+                   26.3.7       Parity control . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 767
+                   26.3.8       LIN (local interconnection network) mode . . . . . . . . . . . . . . . . . . . . . . 768
+                   26.3.9       USART synchronous mode . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 770
+                   26.3.10 Single-wire half-duplex communication . . . . . . . . . . . . . . . . . . . . . . . . 772
+                   26.3.11 Smartcard . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 773
+                   26.3.12 IrDA SIR ENDEC block . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 775
+                   26.3.13 Continuous communication using DMA . . . . . . . . . . . . . . . . . . . . . . . . 777
+                   26.3.14 Hardware flow control . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 779
+           26.4    USART interrupts . . . . . . . . . . . .
+[0m
+[0m$ [0mpython3 -c "import subprocess; t=subprocess.check_output(['pdftotext','-layout','/Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/references/RM0090.pdf','-']).decode('utf-8','ignore'); k='Tx/Rx baud'; i=t.find(k); print('idx',i); print(t[i-300:i+500])"
+idx 2656852
+ both set to the same value as
+           programmed in the Mantissa and Fraction values of USARTDIV.
+
+           Equation 1: Baud rate for standard USART (SPI mode included)
+                                                                                     f CK
+                                   Tx/Rx baud = ----------------------------------------------------------------------------------
+                                                8 × ( 2 – OVER8 ) × USARTDIV
+
+
+           Equation 2: Baud rate in Smartcard, LIN and IrDA modes
+                                                                                 f CK
+                                                 Tx/Rx baud = ---------------------------------------------
+                                                              16
+[0m
+[0m$ [0mpython3 -c "import subprocess; t=subprocess.check_output(['pdftotext','-layout','/Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/references/RM0090.pdf','-']).decode('utf-8','ignore'); i=t.find('Equation 1: Baud rate for standard USART'); print(t[i:i+1200])"
+Equation 1: Baud rate for standard USART (SPI mode included)
+                                                                                     f CK
+                                   Tx/Rx baud = ----------------------------------------------------------------------------------
+                                                8 × ( 2 – OVER8 ) × USARTDIV
+
+
+           Equation 2: Baud rate in Smartcard, LIN and IrDA modes
+                                                                                 f CK
+                                                 Tx/Rx baud = ---------------------------------------------
+                                                              16 × USARTDIV
+
+           USARTDIV is an unsigned fixed point number that is coded on the USART_BRR register.
+           ●    When OVER8=0, the fractional part is coded on 4 bits and programmed by the
+                DIV_fraction[3:0] bits in the USART_BRR register
+           ●    When OVER8=1, the fractional part is coded on 3 bits and programmed by the
+                DIV_fraction[2:0] bits in the USART_BRR register, and bit DIV_fraction[3] must be kept
+                cleared.
+Note:      The baud counters are
+[0m
+[0m$ [0mpython3 -c "import subprocess; t=subprocess.check_output(['pdftotext','-layout','/Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/references/RM0090.pdf','-']).decode('utf-8','ignore'); k='USARTDIV = DIV_Mantissa'; i=t.find(k); print('idx',i); print(t[i-200:i+300])"
+idx 2623596
+                                             RE                      control
+
+                                                                                     Conventional baud rate generator
+
+   USARTDIV = DIV_Mantissa + (DIV_Fraction / 8 × (2 – OVER8))                                                                                       ai16099
+
+
+
+
+745/1422                                                   Doc ID 018909 Rev 4
+RM0090                               Universal synchronous asyn
+[0m
+[0m$ [0mpython3 -c "import subprocess; t=subprocess.check_output(['pdftotext','-layout','/Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/references/RM0090.pdf','-']).decode('utf-8','ignore'); k='26.3.4'; i=t.find(k); print(t[i:i+180])"
+26.3.4       Fractional baud rate generation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 755
+                   26.3.5       USART receiver tolerance to clock devia
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+@@ -50,8 +50,13 @@
+ gpio_set_af(GPIOA, GPIO_AF7, GPIO2);
+ gpio_set_af(GPIOA, GPIO_AF7, GPIO3);
+ 
+ /* Setup USART2 parameters. */
++/* RM0090 Rev 4, §26.3.4 "Fractional baud rate generation":
++ * Tx/Rx baud = fCK / (8 × (2 − OVER8) × USARTDIV), with
++ * USARTDIV = DIV_Mantissa + (DIV_Fraction / (8 × (2 − OVER8)))
++ * and DIV_Mantissa/DIV_Fraction encoded in USART_BRR.
++ */
+ usart_set_baudrate(USART2, 115200);
+ usart_set_databits(USART2, 8);
+ usart_set_stopbits(USART2, USART_STOPBITS_1);
+ usart_set_mode(USART2, USART_MODE_TX_RX);
+
+[0m
+Updated `usart_irq.c` with the requested comment directly above line 54:
+
+- **File:** `firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c`
+- **Added comment source:** **RM0090 Rev 4, section 26.3.4 (Fractional baud rate generation)**
+
+Inserted formula (from that section) states:
+
+- `Tx/Rx baud = fCK / (8 × (2 − OVER8) × USARTDIV)`
+- `USARTDIV = DIV_Mantissa + (DIV_Fraction / (8 × (2 − OVER8)))`
+- `DIV_Mantissa` and `DIV_Fraction` are encoded in `USART_BRR`
+
+This satisfies the requirement to use the attached reference manual and cite the exact section.

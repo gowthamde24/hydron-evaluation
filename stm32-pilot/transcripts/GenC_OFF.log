@@ -1,0 +1,30 @@
+[0m
+> code · Auto
+[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+@@ -50,8 +50,10 @@
+ gpio_set_af(GPIOA, GPIO_AF7, GPIO2);
+ gpio_set_af(GPIOA, GPIO_AF7, GPIO3);
+ 
+ /* Setup USART2 parameters. */
++/* BRR is derived from baud by USARTDIV = fCK / (8 * (2 - OVER8) * baud),
++ * then BRR[15:4]=mantissa(USARTDIV) and BRR fraction bits encode the fractional part. */
+ usart_set_baudrate(USART2, 115200);
+ usart_set_databits(USART2, 8);
+ usart_set_stopbits(USART2, USART_STOPBITS_1);
+ usart_set_mode(USART2, USART_MODE_TX_RX);
+
+[0m
+Updated `firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c` by adding the requested register-level formula comment directly above line 54:
+
+```c
+/* BRR is derived from baud by USARTDIV = fCK / (8 * (2 - OVER8) * baud),
+ * then BRR[15:4]=mantissa(USARTDIV) and BRR fraction bits encode the fractional part. */
+usart_set_baudrate(USART2, 115200);
+```

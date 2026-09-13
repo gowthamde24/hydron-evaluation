@@ -1,0 +1,19 @@
+[0m
+> code · Auto
+[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+[0m✱ [0mGlob "**/*.{pdf,PDF}"[90m in . · 1 match[0m
+[0m✱ [0mGlob "**/*DS*.{pdf,PDF}"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*stm32f4*{pdf,PDF}"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*datasheet*.{pdf,PDF}"[90m in . · 0 matches[0m
+[0m→ [0mRead references/RM0090.pdf
+Blocked on the document-verification requirement.
+
+I attempted to read the attached reference manual (`references/RM0090.pdf`), but this environment returned: **“Cannot read pdf (this model does not support pdf input)”**. I also could not find an attached datasheet PDF in the project files.  
+Because of your constraint (“do not assume which document defines AF mapping”), I did **not** make the code change without verified source text.
+
+Next required input for completion is machine-readable document content (or pasted excerpt) from:
+- the STM32F4 reference manual section on GPIO alternate function configuration, and
+- the STM32F4 datasheet table that maps **PA2/PA3 → AF7 → USART2**.
+
+Once those excerpts are available, I will update lines 50–51 comments with the exact, document-backed wording.

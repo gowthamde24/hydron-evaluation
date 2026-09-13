@@ -1,0 +1,13 @@
+[0m
+> code · Auto
+[0m
+[0m✱ [0mGlob "**/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/**"[90m 0 matches[0m
+[0m✱ [0mGlob "**/usart_irq/*"[90m 0 matches[0m
+[0m✱ [0mGlob "**/*usart*irq*"[90m 0 matches[0m
+[0m→ [0mRead .
+[0m→ [0mRead firmware
+[0m✱ [0mGlob "**/stm32f4-discovery/usart_irq/*"[90m in firmware/libopencm3-examples · 7 matches[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+`firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c:33`
+
+That `clock_setup()` block ends without enabling the USART2 peripheral clock (`RCC_USART2`), which is the most likely root cause for a “peripheral appears unpowered” symptom.

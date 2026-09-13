@@ -1,0 +1,56 @@
+digraph HydronEvaluation {
+    rankdir=TB;
+    bgcolor="white";
+    fontname="Helvetica";
+    node [fontname="Helvetica", fontsize=11, shape=box, style="rounded,filled", margin="0.18,0.12"];
+    edge [fontname="Helvetica", fontsize=9.5, color="#555555"];
+
+    labelloc="t";
+    label=<<FONT POINT-SIZE="16"><B>Hydron Evaluation — Architecture</B></FONT><BR/><FONT POINT-SIZE="10" COLOR="#666666">STM32F407 pilot: ground truth, defect seeding, blind execution, independent verification</FONT>>;
+
+    subgraph cluster_truth {
+        label="Ground Truth Layer";
+        style="rounded,filled"; color="#dce7f5"; fontsize=11;
+        RM0090 [label="RM0090\nReference Manual\n(ST, Doc ID 018909)", fillcolor="#ffffff", color="#3a6ea5"];
+        Datasheet [label="STM32F405/407\nDatasheet\n(ST, DocID022152)", fillcolor="#ffffff", color="#3a6ea5"];
+    }
+
+    subgraph cluster_target {
+        label="Target Under Test";
+        style="rounded,filled"; color="#e8f0d8"; fontsize=11;
+        Firmware [label="usart_irq.c\n(libopencm3, real OSS,\npinned commit)", fillcolor="#ffffff", color="#5a8f3c"];
+    }
+
+    subgraph cluster_tools {
+        label="Build & Verification Tools";
+        style="rounded,filled"; color="#f5ecd6"; fontsize=11;
+        Toolchain [label="ARM GNU Toolchain\n(compile / link)", fillcolor="#ffffff", color="#b8860b"];
+        Renode [label="Renode\n(dynamic byte-level\nverification)", fillcolor="#ffffff", color="#b8860b"];
+    }
+
+    Hydron [label="Hydron CLI\n(system under test)\nhydron run --auto", shape=diamond, style="filled", fillcolor="#f7d9d9", color="#a83a3a", fontsize=12];
+
+    Recon [label="1. Recon &\nGround-Truth Verification"];
+    Seed [label="2. Seed one defect\n(git-tracked source edit)"];
+    Blind [label="3. Remove analysis docs\n(recon/pilot moved out)\n→ enforce blind test"];
+    Run [label="4. Run Hydron on a\nsymptom report\n(no line number given)"];
+    Verify [label="5. Verify independently\n(rebuild, or Renode\necho test where the\ntool class allows it)"];
+    Revert [label="6. Revert defect (git)\nlog real outcome"];
+    Metrics [label="Metrics & Findings\n(identify / diagnose /\nexecute, cited against\nestablished APR & IR\nliterature)", shape=box, style="rounded,filled", fillcolor="#dceee2", color="#2e7d52"];
+
+    RM0090 -> Recon;
+    Datasheet -> Recon;
+    Recon -> Seed;
+    Firmware -> Seed [style=dashed, label="applies to"];
+    Seed -> Blind;
+    Blind -> Run;
+    Run -> Hydron [dir=both];
+    Toolchain -> Hydron [style=dashed, label="available tool"];
+    Renode -> Hydron [style=dashed, label="available tool"];
+    Hydron -> Verify;
+    Verify -> Toolchain [style=dashed];
+    Verify -> Renode [style=dashed];
+    Verify -> Revert;
+    Revert -> Metrics;
+    Revert -> Seed [style=dotted, color="#999999", label="next defect"];
+}

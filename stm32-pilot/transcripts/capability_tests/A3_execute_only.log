@@ -1,0 +1,61 @@
+[0m
+> code · Auto
+[0m
+[0m$ [0mmake
+../../../../rules.mk:66: Cannot find libopencm3 library in the standard search paths.
+../../../../rules.mk:67: *** Please specify it through OPENCM3_DIR variable!.  Stop.
+[0m
+[0m✱ [0mGlob "**/libopencm3/Makefile"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/libopencm3-examples/**/rules.mk"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/libopencm3*"[90m in . · 2 matches[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/Makefile
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/Makefile.include
+[0m✗ [0mread failed
+[91m[1mError: [0mFile not found: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/rules.mk
+[0m✗ [0mread failed
+[91m[1mError: [0mFile not found: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/stm32/rules.mk
+[0m→ [0mRead firmware/libopencm3-examples/examples/rules.mk
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/rules.mk
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/rules.mk
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/rules.mk
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32_pilot/firmware/libopencm3-examples/examples/rules.mk
+@@ -56,9 +56,9 @@
+ ifeq ($(strip $(OPENCM3_DIR)),)
+ # user has not specified the library path, so we try to detect it
+ 
+ # where we search for the library
+-LIBPATHS := ./libopencm3 ../../../../libopencm3 ../../../../../libopencm3
++LIBPATHS := ./libopencm3 ../../../../libopencm3 ../../../../../libopencm3 ../../../../../../libopencm3
+ 
+ OPENCM3_DIR := $(wildcard $(LIBPATHS:=/locm3.sublime-project))
+ OPENCM3_DIR := $(firstword $(dir $(OPENCM3_DIR)))
+ 
+
+[0m
+[0m$ [0mmake
+Build issue fixed.
+
+### What was wrong
+`make` in `.../usart_irq` failed because `examples/rules.mk` only searched a few relative paths for `libopencm3`, and in this workspace the actual library is one level higher than those paths.
+
+### Change made
+Updated this file:
+
+- `firmware/libopencm3-examples/examples/rules.mk`
+
+Changed:
+```make
+LIBPATHS := ./libopencm3 ../../../../libopencm3 ../../../../../libopencm3
+```
+
+To:
+```make
+LIBPATHS := ./libopencm3 ../../../../libopencm3 ../../../../../libopencm3 ../../../../../../libopencm3
+```
+
+### Result
+Re-running `make` in:
+`firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq`
+now succeeds with no errors.
