@@ -1,0 +1,27 @@
+[0m
+> code · Auto
+[0m
+Understood. “It doesn’t work” is too broad to fix safely.
+
+Provide this exact failure packet so I can isolate it in one pass:
+
+1. **What command you ran** (build/flash/monitor).
+2. **Full error output** (not summarized).
+3. **Board + MCU** (exact model).
+4. **Toolchain/SDK** (STM32CubeIDE/CubeMX/HAL/LL version, compiler version).
+5. **Current branch + latest commit** (`git status`, `git log -1 --oneline`).
+6. **Runtime behavior**:
+   - no boot
+   - hard fault/reset loop
+   - peripheral not responding
+   - wrong UART output/garbled text
+7. **If serial is involved**: baud rate used (default expected is often `115200`).
+
+Quick triage you can run immediately:
+- Clean rebuild.
+- Full chip erase + reflash.
+- Verify clock config and linker script match the MCU.
+- Confirm UART baud/port and boot logs.
+- Check power/reset/BOOT pins state.
+
+Once that packet is provided, I’ll give a concrete fix path and patch-level changes.

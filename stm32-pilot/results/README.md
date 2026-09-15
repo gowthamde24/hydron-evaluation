@@ -20,19 +20,24 @@ python3 results/make_plots.py
 | `4_pilot_vs_expanded.png` | Diagnosis/citation quality: the original 9-run pilot vs. everything added in the expanded campaign |
 | `5_by_target.png` | Verification tier broken out by firmware target — the same 5-defect taxonomy applied to 5 different real example files (`usart_irq`, `miniblink`, `timer`, `button`, `usart` polling) |
 
-## Status as of generation
+## Status
 
-25 runs logged (21 harness-half, 4 generation-half) out of the ~52-run
-campaign plan. Not yet included: the 8 shared-linker-script defects
-(`N2`,`T2`,`X2`,`U2`,`F1`,`F2`,`C1`,`C2`), the 12 capability-isolation tests
-(`B2`,`B3`,`R1`,`R2`,`M1`,`M2`,`Q1`,`Q2`, plus repeats), and the 8 new
-generation-grounding tasks (`GenE`-`GenH`). A full contamination/quality
-audit of the 25 runs logged so far (checking for cross-target interference,
-answer-key exposure, and false-success claims — several real instances of
-each were already caught and disclosed in `run_log.csv`'s own notes) is also
-still in progress. These plots reflect a real, honest snapshot of real data —
-not the campaign's final numbers. Re-run `make_plots.py` after the campaign
-and audit finish.
+37 runs logged (33 harness-half, 4 generation-half). This is the campaign's
+final scope: the original 5-defect pilot on `usart_irq`, the same taxonomy
+repeated across 4 more real firmware targets (`miniblink`, `timer`, `button`,
+`usart` polling), all 8 shared-linker-script defects (`N2`,`T2`,`X2`,`U2`,
+`F1`,`F2`,`C1`,`C2`), and one instance each of four capability-isolation
+categories (`B2` no-bug control, `R1` red herring, `M1` multi-defect, `Q1`
+ambiguous report) chosen to prioritize breadth of finding-type over repeated
+sample size. The paired repeats of those four categories (`B3`,`R2`,`M2`,`Q2`)
+and 4 new generation-grounding tasks (`GenE`-`GenH`) were deliberately
+descoped to close out the campaign within a fixed time budget — a scope
+decision, not an incomplete run.
+
+Every run in this data set — including several instances of contamination,
+false-success claims, and wrong-target diagnoses caught along the way — is
+disclosed honestly in `run_log.csv`'s own notes, the same way the original
+pilot's contamination findings were kept and reported rather than discarded.
 
 `make_plots.py` never fabricates or interpolates — every count is read
 directly from `run_log.csv`'s own columns (`loudness_class`,

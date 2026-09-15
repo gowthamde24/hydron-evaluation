@@ -127,10 +127,9 @@ independently verified.
 
 ## Results
 
-26 real, logged Hydron sessions so far (22 bug-fixing runs across five real
-firmware targets, 4 citation-grounding runs) — this evaluation is ongoing,
-and these figures grow as further tests complete. Every chart below is
-generated directly from this evaluation's own run log
+37 real, logged Hydron sessions (33 bug-fixing and adversarial-testing runs
+across five real firmware targets, 4 citation-grounding runs). Every chart
+below is generated directly from this evaluation's own run log
 (`stm32-pilot/pilot/run_log.csv`, via `stm32-pilot/results/make_plots.py`) —
 no number here is estimated or rounded for effect.
 
