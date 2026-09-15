@@ -99,13 +99,8 @@ def main():
         print("ERROR: elf not found: %s" % elf_abs, file=sys.stderr)
         sys.exit(1)
 
-    # Write a temp .resc with the ELF path baked in directly (matching the
-    # working pattern used elsewhere in this pilot, e.g. usart_irq_test.resc)
-    # rather than trying to pass `-e "set elf ...; include ..."` on the
-    # renode command line - that compound-command form was tried first and
-    # silently produced 0 toggles both ways (the ELF was never actually
-    # loaded; see the git history of this file / run_log.csv's X4 entry for
-    # the honest account of that failed first attempt).
+    # Write a temp .resc with the ELF path baked in directly, matching the
+    # pattern used elsewhere in this pilot (e.g. usart_irq_test.resc).
     tmp_resc = "/tmp/button_press_test_%d.resc" % args.port
     with open(RESC) as f:
         resc_body = f.read()

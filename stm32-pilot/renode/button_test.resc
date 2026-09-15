@@ -21,16 +21,9 @@
 # toggles over a fixed window of simulated time -- the only way to measure a
 # rate (blink period) rather than a single instantaneous value.
 #
-# NOTE (found the hard way): this file's :description: directive must stay on
-# ONE line. An earlier version wrapped it across several indented lines
-# (valid-looking YAML style), but Renode's .resc parser does not support that
-# continuation -- it silently treated the second line ("  platform
-# description and leaves it ready for ...") as a literal command, failing
-# with "No such command or device: platform" and never executing anything
-# below it (LoadPlatformDescription, LoadELF). Discovered by connecting to
-# the monitor's TCP port directly and reading back the actual parse error,
-# after several confusing "0 toggles either way" results that looked like a
-# firmware/model problem but were actually this parser gotcha.
+# NOTE: this file's :description: directive must stay on ONE line. Renode's
+# .resc parser does not support wrapping it across indented continuation
+# lines -- a wrapped line is read as a literal command instead.
 
 using sysbus
 mach create "button_test"

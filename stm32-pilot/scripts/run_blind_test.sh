@@ -1,19 +1,15 @@
 #!/usr/bin/env bash
 # =============================================================================
-# run_blind_test.sh — Blind-test hygiene automation for the expanded campaign.
+# run_blind_test.sh — Blind-test hygiene automation.
 #
-# The original 12-run pilot moved recon/, pilot/, renode/, and README.md out
-# of the project directory BY HAND before every Hydron invocation, so Hydron
-# couldn't read its own answer key mid-run (see recon/DEFECT_CANDIDATES.md's
-# "Honest note" and run_log.csv's S1/S2 contamination entries — a manual
-# .bak file and a manual move-back-by-hand slip were exactly how that crib
-# was first found). Doing that by hand does not scale safely to ~50 runs, so
-# this script automates ONLY that hygiene step: stash the answer-key
-# material away, invoke Hydron, restore it. It does NOT seed or revert the
-# defect itself — that varies per defect and stays an explicit, reviewable
-# git/sed command the caller runs immediately before and after this script,
-# exactly as the original pilot did (see DEFECT_CANDIDATES.md for the exact
-# one-line change per defect ID).
+# Stashes recon/, pilot/, renode/, README.md, and prior transcripts out of
+# the project before invoking Hydron, so it investigates from the symptom
+# alone, then restores them. Concurrency-safe: a mutex lock serializes the
+# whole stash -> hydron-run -> restore critical section across any number
+# of parallel invocations, so one run can never expose another's stashed
+# material mid-run. Does NOT seed or revert the defect itself; that stays
+# an explicit git/sed command the caller runs immediately before and after
+# this script (see DEFECT_CANDIDATES.md for the exact change per defect ID).
 #
 # Usage:
 #   ./run_blind_test.sh <prompt-file> <transcript-out-path> [session-title]
@@ -79,54 +75,29 @@ if (cd "$FW_REPO" && git diff --quiet && git diff --cached --quiet); then
 	exit 1
 fi
 
-# A sibling of stm32-pilot/, not /tmp: stays visible in `ls ..` and survives
-# a cleared /tmp if this script is killed mid-run, so nothing looks silently
-# "lost" — same reasoning as setup.sh's other non-destructive design choices.
-#
-# PID-suffixed (not a fixed shared name): the expanded campaign runs several
-# targets (N/T/U/X series) concurrently, each invoking this script
-# independently. A single shared stash path is a real race — one invocation's
-# "already exists, refuse to run" error still fires its EXIT trap, which
-# unconditionally restores WHATEVER is sitting in the shared dir, including
-# another still-in-flight invocation's stashed answer-key material, exposing
-# it mid-run. Observed live during this campaign (a button-target run's error
-# exit restored a concurrent timer-target run's stashed recon/pilot/renode
-# while its `hydron run` was still executing). A PID-unique directory per
-# invocation makes that collision structurally impossible: every invocation
-# only ever stashes into and restores from its own path.
+# A sibling of stm32-pilot/, not /tmp: stays visible and survives a cleared
+# /tmp if this script is killed mid-run. PID-suffixed so concurrent
+# invocations never collide on the same path.
 STASH_DIR="$(cd "$PILOT_ROOT/.." && pwd)/.blind_test_stash.$$"
 STASH_ITEMS=(recon pilot renode README.md)
 
-# transcripts/ is handled separately from STASH_ITEMS, not added to it: every
-# run must still be ABLE TO WRITE its own new transcript during the run (the
-# `hydron run ... > "$TRANSCRIPT"` redirect below), so it can't simply be
-# moved out of the way like a read-only item. Discovered live in this
-# campaign (N4 grepped transcripts/ across prior runs; T5 read a prior run's
-# transcript directly; X3 deliberately grepped transcripts/ for
-# symptom-matching keywords, then read a prior unrelated run's transcript in
-# full) — prior runs' narrated diagnoses/fixes are a real crib source this
-# script didn't originally close. Fix: swap the real transcripts/ dir out for
-# an empty one for the run's duration, so Hydron can still write its own new
-# file but cannot see any other run's; splice that one new file back into
-# the real directory before restoring it.
+# transcripts/ is handled separately from STASH_ITEMS: a run must still be
+# able to WRITE its own new transcript during the run (the `hydron run ...
+# > "$TRANSCRIPT"` redirect below), so it can't simply be moved aside like a
+# read-only item. Prior runs' narrated diagnoses are a real crib source, so
+# the real transcripts/ dir is swapped out for an empty one for the run's
+# duration; the new file is spliced back in before restoring it.
 TRANSCRIPTS_STASH_DIR="$(cd "$PILOT_ROOT/.." && pwd)/.blind_test_transcripts.$$"
 
-# PID-unique stash dirs alone are NOT sufficient under real concurrency: they
-# only stop a process from restoring someone ELSE's stash on its own error
-# path. They do nothing about the more fundamental race, also observed live
-# in this campaign (button target X3's run): process A stashes recon/pilot/
-# renode away and starts its `hydron run`; process B (a different, unrelated
-# target) also wants them hidden, but finds them already absent, so B has
-# nothing of its own to stash — B's own STASH_DIR simply omits those items.
-# If A finishes and restores first, recon/pilot/renode reappear in the
-# project while B's `hydron run` is STILL executing, exposing the answer key
-# mid-run. This is a missing-reference-count problem, not fixable by
-# per-invocation naming alone. The fix: a real mutex serializing the entire
-# stash -> hydron run -> restore critical section across EVERY concurrent
-# invocation of this script (any target), via an atomic `mkdir`-based lock.
-# Costs wall-clock time under concurrency (only one hydron run across all
-# targets executes at a time) but that's the correct trade against silently
-# contaminating another target's blind test.
+# A mutex serializes the entire stash -> hydron-run -> restore critical
+# section across every concurrent invocation of this script, for any
+# target, via an atomic `mkdir`-based lock. PID-unique paths alone aren't
+# enough under real concurrency: one invocation finding recon/pilot/renode
+# already stashed by another still leaves a window where the first to
+# finish restores them while the second is still mid-run. The lock makes
+# that structurally impossible, at the cost of serializing wall-clock time
+# under concurrency, which is the correct trade against silently
+# contaminating another run's blind test.
 LOCK_DIR="$(cd "$PILOT_ROOT/.." && pwd)/.blind_test.lock"
 LOCK_HELD=0
 

@@ -232,13 +232,18 @@ preserved for audit purposes but are not walked through here.
 
 ## References
 
-- STMicroelectronics, *RM0090 Reference Manual* (STM32F405/407/427/429 family), Doc ID 018909 Rev 4.
-- STMicroelectronics, *STM32F405xx/407xx Datasheet*, DocID022152 Rev 8.
-- Zhou, Zhang & Lo, "Where Should the Bugs Be Fixed?", ICSE 2012, pp. 14-24.
-- Wong, Gao, Li, Abreu & Wotawa, "A Survey on Software Fault Localization," IEEE TSE, Vol. 42, No. 8, 2016, pp. 707-740.
-- Qi, Long, Achour & Rinard, "An Analysis of Patch Plausibility and Correctness for Generate-And-Validate Patch Generation Systems," ISSTA 2015, pp. 24-36.
-- Habib & Pradel, "How Many of All Bugs Do We Find? A Study of Static Bug Detectors," ASE 2018, pp. 317-328.
-- Rutar, Almazan & Foster, "A Comparison of Bug Finding Tools for Java," ISSRE 2004.
-- Smith, Barr, Le Goues & Brun, "Is the Cure Worse Than the Disease? Overfitting in Automated Program Repair," ESEC/FSE 2015, pp. 532-543.
-- Sharma et al. (Anthropic), "Towards Understanding Sycophancy in Language Models," ICLR 2024, arXiv:2310.13548.
-- Jimenez et al., "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?", ICLR 2024, arXiv:2310.06770.
+Vendored under `stm32-pilot/references/` where a legitimate open copy exists
+(author's own page, institutional repository, or arXiv). Two papers below
+are cited but not vendored: no freely redistributable copy was found for
+either, only paywalled publisher links.
+
+- STMicroelectronics, *RM0090 Reference Manual* (STM32F405/407/427/429 family), Doc ID 018909 Rev 4. Vendored.
+- STMicroelectronics, *STM32F405xx/407xx Datasheet*, DocID022152 Rev 8. Vendored.
+- Zhou, Zhang & Lo, "Where Should the Bugs Be Fixed?", ICSE 2012, pp. 14-24. Not vendored.
+- Wong, Gao, Li, Abreu & Wotawa, "A Survey on Software Fault Localization," IEEE TSE, Vol. 42, No. 8, 2016, pp. 707-740. Not vendored.
+- Qi, Long, Achour & Rinard, "An Analysis of Patch Plausibility and Correctness for Generate-And-Validate Patch Generation Systems," ISSTA 2015, pp. 24-36. Vendored.
+- Habib & Pradel, "How Many of All Bugs Do We Find? A Study of Static Bug Detectors," ASE 2018, pp. 317-328. Vendored.
+- Rutar, Almazan & Foster, "A Comparison of Bug Finding Tools for Java," ISSRE 2004. Vendored.
+- Smith, Barr, Le Goues & Brun, "Is the Cure Worse Than the Disease? Overfitting in Automated Program Repair," ESEC/FSE 2015, pp. 532-543. Vendored.
+- Sharma et al. (Anthropic), "Towards Understanding Sycophancy in Language Models," ICLR 2024, arXiv:2310.13548. Vendored.
+- Jimenez et al., "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?", ICLR 2024, arXiv:2310.06770. Vendored.
