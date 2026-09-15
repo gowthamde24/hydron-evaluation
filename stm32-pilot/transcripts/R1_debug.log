@@ -1,0 +1,58 @@
+[0m
+> code · Auto
+[0m
+[0m✱ [0mGlob "**/*USART*.*"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*usart*.*"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*uart*.*"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*.c"[90m in . · 0 matches[0m
+[0m→ [0mRead .
+[0m✱ [0mGlob "**/*.c"[90m in firmware · 0 matches[0m
+[0m→ [0mRead firmware
+[0m✱ [0mGlob "**/*.c"[90m in firmware/libopencm3-examples · 100 matches[0m
+[0m✱ [0mGlob "**/*.h"[90m in firmware/libopencm3-examples · 100 matches[0m
+[0m✱ [0mGlob "**/*.mk"[90m in firmware/libopencm3-examples · 6 matches[0m
+[0m✱ [0mGrep "echo|interrupt handler|irq"[90m in firmware/libopencm3-examples/examples/stm32 · 73 matches[0m
+[0m✱ [0mGrep "USART2|usart2|usart2_isr|nvic_enable_irq|RXNE"[90m in firmware/libopencm3-examples · 672 matches[0m
+[0m✱ [0mGlob "**/HYDRON.md"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*stm32*f4*usart*irq*.c"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*.md"[90m in results · 1 match[0m
+[0m→ [0mRead results/README.md
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c
+@@ -35,9 +35,10 @@
+ }
+ 
+ static void usart_setup(void)
+ {
+-	/* Enable the USART2 interrupt. */
++	/* Enable USART2 NVIC line so RXNE/TXE can invoke usart2_isr(). */
++	nvic_enable_irq(NVIC_USART2_IRQ);
+ 
+ 	/* Setup GPIO pins for USART2 transmit. */
+ 	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO2);
+ 
+
+[0m
+[0m$ [0mgit diff -- "firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c"
+Root cause found and fixed in:
+
+`firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/usart_irq.c`
+
+### Root cause
+`USART2` peripheral interrupt generation was enabled (`RXNEIE`), but the corresponding **NVIC interrupt line was never enabled**.  
+So RXNE flag sets in `USART_SR`, but `usart2_isr()` is never dispatched.
+
+### Fix applied
+Added NVIC enable inside `usart_setup()`:
+
+```c
+/* Enable USART2 NVIC line so RXNE/TXE can invoke usart2_isr(). */
+nvic_enable_irq(NVIC_USART2_IRQ);
+```
+
+This connects the peripheral interrupt request to the Cortex-M interrupt controller, allowing RXNE/TXE events to call `usart2_isr()` and restore echo behavior.
