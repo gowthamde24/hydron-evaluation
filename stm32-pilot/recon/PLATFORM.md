@@ -138,15 +138,11 @@ above, applied up front this time instead of discovered mid-pilot.
   `stm32f4.repl` does not define one. `adc-dac-printf` was dropped as a
   target for this reason — it would only add a second static-only-tier
   peripheral without a new finding.
-- **Open, not yet resolved:** whether Renode's `GPIOPort.STM32_GPIOPort`
-  model actually gates register behavior on the corresponding
-  `RCC_AHB1ENR` clock-enable bit (RM0090 §6.3.12, p.145) the way real
-  silicon does, or ignores it. This determines whether the "missing
-  clock-enable" defects (`G5`/`X5` in `DEFECT_CANDIDATES.md`) are
-  dynamically provable in Renode or fall into the same static-only tier as
-  S3/S4. Stated as an open question here deliberately — the campaign's own
-  runs answer it, and the answer will be recorded honestly in
-  `DEFECT_CANDIDATES.md` either way, not assumed.
+- **Resolved:** whether Renode's `GPIOPort.STM32_GPIOPort` model gates
+  register behavior on the corresponding `RCC_AHB1ENR` clock-enable bit
+  (RM0090 §6.3.12, p.145) the way real silicon does. Tested live for both
+  the "missing clock-enable" defects (`N5`, `X5` in `DEFECT_CANDIDATES.md`):
+  it does not. Both stay static-tier, the same as S3/S4.
 
 ## The methodological point this makes
 

@@ -6,7 +6,7 @@ digraph HydronEvaluation {
     edge [fontname="Helvetica", fontsize=9.5, color="#555555"];
 
     labelloc="t";
-    label=<<FONT POINT-SIZE="16"><B>Hydron Evaluation — Architecture</B></FONT><BR/><FONT POINT-SIZE="10" COLOR="#666666">STM32F407 pilot: ground truth, defect seeding, blind execution, independent verification</FONT>>;
+    label=<<FONT POINT-SIZE="16"><B>Hydron Evaluation Architecture</B></FONT><BR/><FONT POINT-SIZE="10" COLOR="#666666">STM32F407 pilot: ground truth, defect seeding, blind execution, independent verification</FONT>>;
 
     subgraph cluster_truth {
         label="Ground Truth Layer";
@@ -52,5 +52,5 @@ digraph HydronEvaluation {
     Verify -> Renode [style=dashed];
     Verify -> Revert;
     Revert -> Metrics;
-    Revert -> Seed [style=dotted, color="#999999", label="next defect"];
+    Revert -> Seed [style=dotted, color="#999999", label="  next defect  "];
 }

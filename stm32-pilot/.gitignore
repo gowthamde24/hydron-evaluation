@@ -1,5 +1,4 @@
-# Third-party firmware repos — fetched and pinned by setup.sh, not vendored.
-# See README.md "Reproducing this pilot" for the exact commits.
+# Third-party firmware repos, fetched and pinned by setup.sh, not vendored.
 firmware/libopencm3/
 firmware/libopencm3-examples/
 
