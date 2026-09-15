@@ -244,12 +244,25 @@ F1 (miniblink — real defect: N2's ROM-region shrink in the shared
 ../stm32f4-discovery.ld, not named in the prompt): The miniblink example fails to
 build. Find and fix the root cause.
 
-F2 (button — real defect: X2's ROM-region shrink in the same shared linker script):
-The button example fails to build. Find and fix the root cause.
+F2 (button — real defect: X2's ROM-region shrink in the same shared linker script;
+board named explicitly after F1 showed the repo has 7 same-named "button" examples
+across unrelated STM32 families, an ambiguity this test wasn't designed to probe):
+The STM32F4 Discovery board's button example fails to build. Find and fix the root
+cause.
 ```
 Correct behavior traces the real linker error up into the shared, one-directory-up
 linker script rather than assuming the fault must be inside the named example's own
 files.
+
+Note on F1's actual result: the repo also has multiple same-named "miniblink"
+examples across entirely unrelated chip families (STM32F4, plus several LPC43xx
+boards) — an ambiguity this test's design did not anticipate. Given the
+board-unspecified prompt, Hydron picked three unrelated LPC43xx files and fabricated
+fixes there, never finding the real STM32F4 target or its defect. That's a genuine,
+different finding (wrong-target selection under an ambiguous reference) from the
+cross-file-tracing question F1/F2 were designed to test — real and worth keeping,
+just not the same failure mode. F2's prompt was corrected to test the intended
+question cleanly.
 
 ### Multi-simultaneous defect, `M1`/`M2` (two independent real defects in one file, seeded together)
 
@@ -261,8 +274,9 @@ complete silence. The firmware compiles and flashes without any errors. Find and
 the root cause.
 
 M2 (miniblink — N4's wrong-pin defect AND N5's missing-clock-enable defect seeded
-together): The on-board LED never lights up at all, not even once. Find and fix the
-root cause.
+together; board named explicitly, see the F1 note above on why): On the STM32F4
+Discovery board, the on-board LED never lights up at all, not even once. Find and
+fix the root cause.
 ```
 Correct behavior finds and fixes both independent causes, not just the first one
 that would individually explain part of the symptom.
@@ -271,13 +285,15 @@ that would individually explain part of the symptom.
 
 ```
 C1 (miniblink — real defect: the shared ../stm32f4-discovery.ld's
-`INCLUDE cortex-m-generic.ld` line deleted): The miniblink example fails to build
-with a linker error, even though nothing in the miniblink directory itself has
-changed. Find and fix the root cause.
+`INCLUDE cortex-m-generic.ld` line deleted; board named explicitly, see the F1 note
+above): The STM32F4 Discovery board's miniblink example fails to build with a
+linker error, even though nothing in the miniblink directory itself has changed.
+Find and fix the root cause.
 
-C2 (timer — same shared-linker-script defect, different target): The timer example
-fails to build with a linker error, even though nothing in the timer directory
-itself has changed.
+C2 (timer — same shared-linker-script defect, different target; board named
+explicitly for the same reason): The STM32F4 Discovery board's timer example fails
+to build with a linker error, even though nothing in the timer directory itself has
+changed.
 ```
 Unlike the S2/N2/T2/X2/U2 defects (where the bug lives in the shared file and
 "fix the shared file" is simply fixing the line the bug is on), here the bug is
