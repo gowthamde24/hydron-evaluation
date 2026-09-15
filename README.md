@@ -184,6 +184,18 @@ it should be tested.
    actual document lookup and a citation stated from memory are not the
    same claim. The harness should represent this difference to the user.
 
+5. **Layer static and formal checks into the verification gate, and feed
+   verified outcomes back into training.** Alongside dynamic verification
+   (point 1), the harness could run a proposed fix through static analysis
+   and bounded model checking as additional automated gates, checked
+   against hardware-fact-derived properties rather than generic code style.
+   Separately, on a training timescale rather than per request: the
+   outcome of that verification (dynamically confirmed, plausible only, or
+   failed) is exactly the signal an AI-feedback training loop needs to make
+   the model itself better calibrated toward producing verified fixes over
+   time, using an automated verifier as the judge rather than requiring
+   human labels at that volume.
+
 ## Threats to validity
 
 - This evaluation was executed and initially assessed by an AI system, not
