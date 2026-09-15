@@ -1,45 +1,14 @@
 #!/usr/bin/env python3
 """Dynamically verifies button.c's "hold the button, LED blinks slower" behavior
-against a real Renode simulation of the STM32F4-Discovery board.
-
-Unlike echo_test.py (which just sends one byte and checks the response, since
-the usart_irq target's defects are checkable with a single request/response),
-this test needs to measure a *rate*: how many times the LED (a genuine
-Miscellaneous.LED model at sysbus.gpioPortD.UserLED, see recon/PLATFORM.md)
-toggles over a fixed window of simulated time, once with the on-board button
-(a genuine Miscellaneous.Button model at sysbus.gpioPortA.UserButton,
-Press()/Release()-injectable, also confirmed non-stub in PLATFORM.md) held,
-and once released. It drives Renode's monitor directly over its `-P` TCP port
-(plain text protocol: send a command line, read back the echoed command, its
-result, and a colored prompt) rather than going through a .resc script for the
-whole run, because the run needs interleaved Press/Release + timed sampling
-that a static .resc script can't express.
-
-How it fits together:
-  1. Launches `renode --disable-gui -P <port> button_test.resc` as a
-     subprocess (button_test.resc loads the platform description and the ELF
-     given by the $elf variable, then stops - no `start`, this script drives
-     execution itself).
-  2. Connects to the monitor port and, for each of "released" and "held",
-     repeatedly calls `emulation RunFor "0.02"` (20ms of simulated time) and
-     samples `sysbus.gpioPortD.UserLED State` between steps, counting
-     transitions over a fixed total window (default 3s simulated).
-  3. Reports both toggle counts and their ratio.
+in Renode: counts LED toggles over a fixed sim-time window with the on-board
+button released, then held, and reports the ratio.
 
 Usage:
     python3 button_press_test.py <path-to-button.elf> [--port PORT] [--seconds N]
 
-Expected output on correctly-working (baseline) firmware:
-    RELEASED: ~34 toggles / 3.0s sim-time
-    HELD:     ~17 toggles / 3.0s sim-time   (~2.0x slower - matches the code's
-                                              extra 3,000,000-iteration delay
-                                              loop added only when held)
-
-Expected output with X4 (gpio_get polls GPIO1 instead of GPIO0, so the real
-GPIOA0 button has zero effect) seeded: RELEASED and HELD toggle counts
-equal. X5 (GPIOA's peripheral clock never enabled) produces no observable
-difference either, since Renode's GPIO model does not gate on the
-clock-enable bit; see DEFECT_CANDIDATES.md.
+Baseline firmware: HELD toggles at roughly half the RELEASED rate (the code's
+extra delay loop when held). X4 (wrong GPIO pin polled) and X5 (missing clock
+enable) both produce equal RELEASED/HELD counts; see DEFECT_CANDIDATES.md.
 """
 import socket
 import subprocess

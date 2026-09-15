@@ -1,25 +1,16 @@
 #!/usr/bin/env python3
-"""Polls the running Renode instance's monitor (TCP port 4568, opened by
-`renode --disable-gui -P 4568 timer_led_test.resc`) for GPIOD's ODR register
-value repeatedly over a fixed wall-clock window, and counts how many times
-bit 12 (the on-board LED pin, PD12) actually transitioned.
+"""Polls the running Renode instance's monitor (TCP port 4568) for GPIOD's
+ODR register (0x40020C14, bit 12 = PD12, the on-board LED) over a fixed
+wall-clock window, and counts LED transitions.
 
-Unlike led_probe.py (miniblink's TOGGLING-vs-STUCK check), this test's two
-predicted outcomes both toggle -- the whole point of the T4 defect is a rate
-change, not a stuck pin. Baseline (correct TIM_DIER_CC1IE) should show many
-transitions in a ~20s window (Morse element timings are 100ms-700ms apart -
-a full 18-element SOS cycle is ~3.4s of simulated time). The T4 defect
-(TIM_DIER_UIE only) should show at most one transition in the same window,
-because tim2_isr only ever fires on the ~13.1s counter-overflow event.
-
-GPIOD's base address is 0x40020C00 (platforms/cpus/stm32f4.repl); ODR
-(output data register) is at offset 0x14, so GPIOD's ODR lives at
-0x40020C14. Bit 12 corresponds to PD12, the pin wired to Renode's UserLED
-model in platforms/boards/stm32f4_discovery.repl.
+Baseline (correct TIM_DIER_CC1IE) shows many transitions in a ~20s window
+(Morse timing, ~3.4s per SOS cycle). The T4 defect (TIM_DIER_UIE only)
+shows at most one, since tim2_isr then only fires on the ~13.1s
+counter-overflow event.
 
 Usage:
     1. renode --disable-gui -P 4568 timer_led_test.resc &
-    2. sleep 3   # give the emulator time to boot
+    2. sleep 3
     3. python3 timer_led_probe.py [window_seconds] [poll_interval]
 """
 import socket

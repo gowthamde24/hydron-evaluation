@@ -1,29 +1,19 @@
 :name: STM32F4 button dynamic test
 :description: Loads the button firmware under test and leaves it ready for button_press_test.py to drive via the monitor's TCP port.
-#
-# Loads the button firmware under test onto the real STM32F4-Discovery
-# platform description and leaves it ready for button_press_test.py to drive
-# via the monitor's TCP port (-P) -- Press/Release the genuine
-# Miscellaneous.Button model at gpioPortA@0 and sample the genuine
-# Miscellaneous.LED model at gpioPortD@12 (see recon/PLATFORM.md: both are
-# real Renode peripheral models, not stubs).
-#
+
 # Run this with:
 #   renode --disable-gui -P 4610 button_test.resc &
 # Then, from another terminal:
 #   python3 button_press_test.py
 #
-# Unlike usart_irq_test.resc (which calls `start` and lets the CPU run in real
-# time against a TCP-bridged UART), this script deliberately does NOT call
-# `start`. button_press_test.py drives execution itself via repeated
-# `emulation RunFor "<seconds>"` monitor commands in small steps, sampling
-# sysbus.gpioPortD.UserLED's State property between each step to count LED
-# toggles over a fixed window of simulated time -- the only way to measure a
-# rate (blink period) rather than a single instantaneous value.
+# Deliberately does NOT call `start`: button_press_test.py drives execution
+# itself via repeated `emulation RunFor "<seconds>"` monitor commands,
+# sampling gpioPortD.UserLED's State between steps to count toggles over a
+# fixed window, which is how a rate (blink period) gets measured rather than
+# a single instantaneous value.
 #
-# NOTE: this file's :description: directive must stay on ONE line. Renode's
-# .resc parser does not support wrapping it across indented continuation
-# lines -- a wrapped line is read as a literal command instead.
+# NOTE: :description: must stay on one line - Renode's parser reads a
+# wrapped continuation line as a literal command.
 
 using sysbus
 mach create "button_test"

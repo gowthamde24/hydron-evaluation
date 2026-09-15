@@ -1,18 +1,11 @@
 #!/usr/bin/env bash
-# =============================================================================
 # setup.sh - Reproduces the STM32 pilot's build environment from scratch.
 #
-# What this does, in order:
-#   1. Checks for a WORKING ARM cross-compiler (not just present - actually
-#      able to compile, since a broken toolchain was a real problem hit here)
-#   2. Checks for QEMU (optional)
-#   3. Checks for Renode (optional, recommended - see recon/PLATFORM.md)
-#   4. Clones the real firmware repos at PINNED commits (not "latest")
-#   5. Builds the library and does a smoke-test build of the firmware under test
+# Checks for a working ARM cross-compiler, QEMU, and Renode (see
+# recon/PLATFORM.md), clones the firmware repos at pinned commits, builds
+# the library, and smoke-tests a build of the firmware under test.
 #
-# Safe to re-run any time - every step checks current state before acting,
-# nothing is destructive.
-# =============================================================================
+# Safe to re-run any time: every step checks current state before acting.
 
 # -u : fail on use of an unset variable (catches typos in variable names)
 # -o pipefail : a pipeline's exit status is its last *failing* command, not

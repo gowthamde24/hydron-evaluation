@@ -1,44 +1,25 @@
 #!/usr/bin/env bash
-# =============================================================================
 # run_blind_test.sh - Blind-test hygiene automation.
 #
 # Stashes recon/, pilot/, renode/, README.md, and prior transcripts out of
-# the project before invoking Hydron, so it investigates from the symptom
-# alone, then restores them. Concurrency-safe: a mutex lock serializes the
-# whole stash -> hydron-run -> restore critical section across any number
-# of parallel invocations, so one run can never expose another's stashed
-# material mid-run. Does NOT seed or revert the defect itself; that stays
-# an explicit git/sed command the caller runs immediately before and after
-# this script (see DEFECT_CANDIDATES.md for the exact change per defect ID).
+# the project before invoking Hydron, runs it non-interactively, then
+# restores them. A mutex lock serializes stash -> run -> restore across
+# concurrent invocations. Does NOT seed or revert the defect itself; that's
+# an explicit git/sed command the caller runs before and after this script
+# (see DEFECT_CANDIDATES.md for the change per defect ID).
 #
 # Usage:
 #   ./run_blind_test.sh <prompt-file> <transcript-out-path> [session-title]
 #
-#   <prompt-file>          plain-text file containing the exact symptom report
-#                          to send Hydron (see recon/HYDRON_PROMPTS.md)
+#   <prompt-file>          plain-text symptom report to send Hydron
+#                          (see recon/HYDRON_PROMPTS.md)
 #   <transcript-out-path>  where to write the raw session transcript, e.g.
 #                          transcripts/N1_debug.log
 #   [session-title]        optional --title for `hydron run`, defaults to the
 #                          transcript filename
 #
-# What it does, in order:
-#   1. Verifies the defect has already been seeded (git status must show a
-#      real diff) - refuses to run a "blind" test against an unmodified
-#      working tree, since that's not a test of anything
-#   2. Moves recon/, pilot/, renode/, and README.md out of the project to a
-#      sibling temp directory (NOT /tmp - a sibling of stm32-pilot/, so it
-#      survives if /tmp is cleared mid-run and stays easy to find if this
-#      script is interrupted)
-#   3. Runs `hydron run --auto` non-interactively, writing raw output to the
-#      transcript path
-#   4. Restores the stashed files, even if Hydron's run failed or was
-#      interrupted (trap-based, not just a happy-path move-back)
-#   5. Leaves the (now Hydron-edited) working tree in place for the caller to
-#      verify (build / Renode) and revert
-#
 # Safe to re-run: refuses to stomp an existing transcript file, and the
 # restore step is idempotent.
-# =============================================================================
 
 set -uo pipefail
 
@@ -61,13 +42,9 @@ if [ -f "$TRANSCRIPT" ]; then
 	exit 1
 fi
 
-# firmware/libopencm3 and firmware/libopencm3-examples are each their OWN
-# nested git clones (see setup.sh) - invisible to a `git diff` run from
-# PILOT_ROOT, which stops at the nested .git boundary. Every seeded defect
-# in this campaign lives inside firmware/libopencm3-examples specifically
-# (see DEFECT_CANDIDATES.md), so the dirty-check has to run inside THAT
-# repo, not the parent one. Catches the "forgot to seed the defect" mistake
-# before it wastes a real Hydron credit.
+# firmware/libopencm3-examples is its own nested git clone (see setup.sh),
+# invisible to a `git diff` run from PILOT_ROOT. The dirty-check runs inside
+# that repo directly, to catch an unseeded defect before it wastes a run.
 FW_REPO="$PILOT_ROOT/firmware/libopencm3-examples"
 if (cd "$FW_REPO" && git diff --quiet && git diff --cached --quiet); then
 	echo "ERROR: no seeded change detected in firmware/libopencm3-examples." >&2
@@ -81,23 +58,16 @@ fi
 STASH_DIR="$(cd "$PILOT_ROOT/.." && pwd)/.blind_test_stash.$$"
 STASH_ITEMS=(recon pilot renode README.md)
 
-# transcripts/ is handled separately from STASH_ITEMS: a run must still be
-# able to WRITE its own new transcript during the run (the `hydron run ...
-# > "$TRANSCRIPT"` redirect below), so it can't simply be moved aside like a
-# read-only item. Prior runs' narrated diagnoses are a real crib source, so
-# the real transcripts/ dir is swapped out for an empty one for the run's
-# duration; the new file is spliced back in before restoring it.
+# transcripts/ needs to stay writable during the run itself (Hydron's own
+# output is redirected there), so it's swapped for an empty dir instead of
+# moved aside, and the new file spliced back in before restoring it. This
+# keeps prior runs' narrated diagnoses out of Hydron's reach mid-session.
 TRANSCRIPTS_STASH_DIR="$(cd "$PILOT_ROOT/.." && pwd)/.blind_test_transcripts.$$"
 
-# A mutex serializes the entire stash -> hydron-run -> restore critical
-# section across every concurrent invocation of this script, for any
-# target, via an atomic `mkdir`-based lock. PID-unique paths alone aren't
-# enough under real concurrency: one invocation finding recon/pilot/renode
-# already stashed by another still leaves a window where the first to
-# finish restores them while the second is still mid-run. The lock makes
-# that structurally impossible, at the cost of serializing wall-clock time
-# under concurrency, which is the correct trade against silently
-# contaminating another run's blind test.
+# Mutex over the whole stash -> run -> restore section: PID-unique paths
+# alone still leave a window where one invocation restores files while
+# another is mid-run. The lock closes that at the cost of serializing
+# concurrent runs, which is the right trade against cross-run contamination.
 LOCK_DIR="$(cd "$PILOT_ROOT/.." && pwd)/.blind_test.lock"
 LOCK_HELD=0
 

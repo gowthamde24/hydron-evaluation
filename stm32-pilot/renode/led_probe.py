@@ -1,31 +1,14 @@
 #!/usr/bin/env python3
-"""Polls the running Renode instance's monitor (TCP port 4567, opened by
-`renode --disable-gui -P 4567 miniblink_test.resc`) for GPIOD's ODR register
-value, several times over a few seconds, and reports whether bit 12 (the
-on-board LED pin, PD12) was ever observed both set and clear - i.e. whether
-the LED is genuinely toggling - or stuck at one value the whole time.
-
-How this fits together:
-  miniblink_test.resc (run separately, first) boots the firmware inside
-  Renode. Unlike usart_irq's UART bridge, there's no byte-level peripheral
-  bridge for GPIO in this setup - instead this script talks to Renode's own
-  monitor console directly (exposed as a plain TCP/telnet-ish socket by the
-  `-P 4567` flag) and issues real `sysbus ReadDoubleWord <addr>` commands,
-  the same commands a human would type interactively.
-
-  GPIOD's base address is 0x40020C00 (platforms/cpus/stm32f4.repl in this
-  Renode install); ODR (output data register) is at offset 0x14, so GPIOD's
-  ODR lives at 0x40020C14. Bit 12 corresponds to PD12, the pin wired to
-  Renode's UserLED model in platforms/boards/stm32f4_discovery.repl.
+"""Polls the running Renode instance's monitor (TCP port 4567) for GPIOD's
+ODR register (0x40020C14, bit 12 = PD12, the on-board LED) over several
+samples, and reports whether the LED is genuinely toggling or stuck.
 
 Usage:
     1. renode --disable-gui -P 4567 miniblink_test.resc &
-    2. sleep 3   # give the emulator time to boot
+    2. sleep 3
     3. python3 led_probe.py
 
-Output:
-    Prints each raw sample, then a verdict: TOGGLING (both 0 and 1 seen for
-    bit 12) or STUCK (only one value seen across every sample).
+Output: each raw sample, then a verdict (TOGGLING or STUCK).
 """
 import socket
 import sys
