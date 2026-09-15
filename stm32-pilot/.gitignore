@@ -14,7 +14,7 @@ firmware/libopencm3-examples/
 # Local toolchain/emulator installs, if someone points them into this repo
 arm-gnu-toolchain/
 
-# Python (only used to regenerate pilot/figure.png)
+# Python (used to regenerate the plots in results/)
 .venv/
 venv/
 __pycache__/

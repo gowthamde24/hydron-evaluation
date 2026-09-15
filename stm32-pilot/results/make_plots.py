@@ -22,6 +22,7 @@ from collections import Counter, defaultdict
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PILOT_ROOT = os.path.dirname(SCRIPT_DIR)
@@ -197,6 +198,7 @@ def main():
                  "Each cell is one real Hydron run (n=4 total) - color is the actual outcome")
     ax.grid(False)
     ax.set_aspect("equal")
+    ax.tick_params(length=0)
     for spine in ax.spines.values():
         spine.set_visible(False)
     fig.tight_layout()
@@ -204,24 +206,32 @@ def main():
     plt.close(fig)
 
     # ---- Plot 4: grounding_class across the WHOLE campaign, original pilot vs expanded ----
+    # Color already encodes category (grounded_correct, etc). A plain legend
+    # from bar labels would just repeat those colors, not explain the
+    # solid-vs-faded distinction. Build a separate, explicit legend for that.
     original_ids = {"S1", "S2", "S3", "S4", "S5", "GenC-ON", "GenC-OFF", "GenD-ON", "GenD-OFF"}
     orig_g = Counter(r["grounding_class"] for r in rows if r["run_id"] in original_ids)
     exp_g = Counter(r["grounding_class"] for r in rows if r["run_id"] not in original_ids)
-    fig, ax = plt.subplots(figsize=(7.5, 4.8))
+    fig, ax = plt.subplots(figsize=(7.5, 5.0))
     x = range(len(gclass_order))
     w = 0.35
     ax.bar([i - w / 2 for i in x], [orig_g.get(g, 0) for g in gclass_order], width=w,
-           label=f"Original pilot (n={sum(orig_g.values())})",
            color=[gclass_colors[g] for g in gclass_order], edgecolor="#333")
     ax.bar([i + w / 2 for i in x], [exp_g.get(g, 0) for g in gclass_order], width=w,
-           label=f"Expanded campaign, in progress (n={sum(exp_g.values())})",
-           color=[gclass_colors[g] for g in gclass_order], alpha=0.45, edgecolor="#333")
+           color=[gclass_colors[g] for g in gclass_order], alpha=0.4, edgecolor="#333")
     ax.set_xticks(list(x))
     ax.set_xticklabels([gclass_labels[g] for g in gclass_order])
     ax.set_ylabel("Count of runs")
-    ax.set_title("Diagnosis/citation quality: original pilot vs. expanded campaign\n"
-                 "'confident_wrong' now also covers harness misdiagnoses, not just citations",
+    ax.set_title("Diagnosis and citation quality: original pilot vs. expanded campaign\n"
+                 "'confident_wrong' also covers harness misdiagnoses, not just citations",
                  fontsize=11)
+    legend_handles = [
+        Patch(facecolor="#999999", edgecolor="#333",
+              label=f"Original pilot (n={sum(orig_g.values())})"),
+        Patch(facecolor="#999999", edgecolor="#333", alpha=0.4,
+              label=f"Expanded campaign (n={sum(exp_g.values())})"),
+    ]
+    ax.legend(handles=legend_handles, frameon=False, loc="upper right", fontsize=9)
     fig.tight_layout()
     fig.savefig(os.path.join(OUT_DIR, "4_pilot_vs_expanded.png"), dpi=160, bbox_inches="tight")
     plt.close(fig)
@@ -255,9 +265,12 @@ def main():
     ax.set_title("Repair verification tier by firmware target\n"
                  "Same L0-L3 defect taxonomy applied to 5 different real example files")
     ax.set_ylim(0, max(target_n.values()) + 1.5)
-    ax.legend(frameon=False, loc="upper right", fontsize=8)
-    fig.tight_layout()
-    fig.savefig(os.path.join(OUT_DIR, "5_by_target.png"), dpi=160)
+    fig.legend(handles=[Patch(facecolor=tier_colors[t], label=tier_labels[t].split("\n")[0])
+                        for t in tier_order],
+               loc="lower center", bbox_to_anchor=(0.5, -0.02), ncol=4, fontsize=8,
+               frameon=False, columnspacing=1.2, handletextpad=0.5)
+    fig.tight_layout(rect=(0, 0.06, 1, 1))
+    fig.savefig(os.path.join(OUT_DIR, "5_by_target.png"), dpi=160, bbox_inches="tight")
     plt.close(fig)
 
     print(f"Wrote 5 plots to {OUT_DIR} from {n_total} logged runs "
