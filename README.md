@@ -22,6 +22,7 @@ nothing is presented with more confidence than the evidence supports.
 - [Methodology](#methodology)
 - [Findings](#findings)
 - [Quantitative metrics](#quantitative-metrics)
+- [Results](#results)
 - [Approaches to improve Hydron's execution harness](#approaches-to-improve-hydrons-execution-harness)
 - [Threats to validity](#threats-to-validity)
 - [Repository structure](#repository-structure)
@@ -123,6 +124,49 @@ has studied this exact distinction for over a decade under the term
 "plausible but incorrect" patches (Qi, Long, Achour & Rinard, ISSTA 2015).
 This evaluation's own data shows the same gap: 100% plausible, 40%
 independently verified.
+
+## Results
+
+26 real, logged Hydron sessions so far (22 bug-fixing runs across five real
+firmware targets, 4 citation-grounding runs) — this evaluation is ongoing,
+and these figures grow as further tests complete. Every chart below is
+generated directly from this evaluation's own run log
+(`stm32-pilot/pilot/run_log.csv`, via `stm32-pilot/results/make_plots.py`) —
+no number here is estimated or rounded for effect.
+
+**Evaluation architecture** — the same six-step pipeline (ground truth → seed
+→ blind execution → independent verification → revert → log) applied across
+every one of the five firmware targets below:
+
+![Hydron evaluation architecture](stm32-pilot/pilot/diagrams/architecture.png)
+
+**Fault-localization and repair, by defect class** — how often Hydron found
+the true cause, correctly explained it, and applied a correct fix, broken
+out by how loud a failure the defect produces (a build error vs. a silent
+runtime failure):
+
+![Fault-localization to repair funnel by defect class](stm32-pilot/results/1_funnel_by_defect_class.png)
+
+**Verification tier of every repair** — plausible and verified are tracked
+as separate claims throughout this evaluation, never conflated:
+
+![Verification tier of every seeded-defect repair](stm32-pilot/results/2_verification_tier.png)
+
+**Citation grounding, with and without an explicit instruction to ground
+claims in the provided documentation:**
+
+![Citation grounding, task by task](stm32-pilot/results/3_grounding_on_vs_off.png)
+
+**Diagnosis and citation quality across the two phases of this evaluation** —
+the original pilot and the larger campaign that followed it:
+
+![Diagnosis and citation quality: original pilot vs. expanded campaign](stm32-pilot/results/4_pilot_vs_expanded.png)
+
+**Repair verification tier by firmware target** — the same defect taxonomy
+applied to five different real example programs, to check whether findings
+hold beyond a single file:
+
+![Repair verification tier by firmware target](stm32-pilot/results/5_by_target.png)
 
 ## Approaches to improve Hydron's execution harness
 

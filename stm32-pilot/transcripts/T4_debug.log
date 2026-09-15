@@ -1,0 +1,169 @@
+[0m
+> code · Auto
+[0m
+[0m✱ [0mGlob "**/*.{c,h,cpp,hpp}"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/CMakeLists.txt"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*main*.*"[90m in . · 0 matches[0m
+[0m→ [0mRead .
+[0m✱ [0mGlob "**/*.{c,h,cpp,hpp}"[90m in firmware · 0 matches[0m
+[0m✱ [0mGlob "**/*main*.*"[90m in firmware · 0 matches[0m
+[0m✱ [0mGlob "**/CMakeLists.txt"[90m in firmware · 0 matches[0m
+[0m→ [0mRead firmware
+[0m✱ [0mGlob "**/*.{c,h,cpp,hpp}"[90m in firmware/libopencm3-examples · 100 matches[0m
+[0m✱ [0mGlob "**/Makefile"[90m in firmware/libopencm3-examples · 100 matches[0m
+[0m✱ [0mGrep "morse|blink|led|delay|timer|sleep"[90m in firmware/libopencm3-examples · 496 matches[0m
+[0m✱ [0mGrep "Morse|morse|pattern|ten|seconds|blink"[90m in . · 75 matches[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+[0m✱ [0mGrep "frequency_sequence|ELEMENT_TIME|DIT|DAH|tim2_isr"[90m in firmware/libopencm3-examples · 47 matches[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f1/stm32-h103/timer/timer.c
+[0m
+[0m$ [0mgit status --short
+M pilot/run_log.csv
+ M recon/DEFECT_CANDIDATES.md
+ M recon/HYDRON_PROMPTS.md
+ M recon/PLATFORM.md
+ M recon/ground_truth.md
+?? renode/led_probe.py
+?? renode/miniblink_test.resc
+?? scripts/
+?? transcripts/N1_debug.log
+?? transcripts/N3_debug.log
+?? transcripts/N4_debug.log
+?? transcripts/T1_debug.log
+?? transcripts/T3_debug.log
+?? transcripts/T4_debug.log
+?? transcripts/U1_debug.log
+?? transcripts/U3_debug.log
+?? transcripts/U4_debug.log
+?? transcripts/X1_debug.log
+?? transcripts/X3_debug.log
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+@@ -109,10 +109,10 @@
+ /* Disable preload. */
+ timer_disable_preload(TIM2);
+ timer_continuous_mode(TIM2);
+ 
+-/* count full range, as we'll update compare value continuously */
+-timer_set_period(TIM2, 65535);
++/* Use full 32-bit auto-reload range on TIM2 to avoid long wrap stalls. */
++timer_set_period(TIM2, 0xFFFFFFFFU);
+ 
+ /* Set the initual output compare value for OC1. */
+ timer_set_oc_value(TIM2, TIM_OC1, frequency_sequence[frequency_sel++]);
+ 
+
+[0m
+[0m$ [0mmake
+../../../../rules.mk:66: Cannot find libopencm3 library in the standard search paths.
+../../../../rules.mk:67: *** Please specify it through OPENCM3_DIR variable!.  Stop.
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+@@ -37,9 +37,9 @@
+ #define INTRA (1*ELEMENT_TIME)
+ #define INTER (3*ELEMENT_TIME)
+ #define WORD (7*ELEMENT_TIME)
+ 
+-uint16_t frequency_sequence[] = {
++static const uint32_t frequency_sequence[] = {
+ 	DIT,
+ 	INTRA,
+ 	DIT,
+ 	INTRA,
+
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+@@ -17,8 +17,9 @@
+  * You should have received a copy of the GNU Lesser General Public License
+  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#include <stdint.h>
+ #include <libopencm3/cm3/nvic.h>
+ #include <libopencm3/stm32/rcc.h>
+ #include <libopencm3/stm32/gpio.h>
+ #include <libopencm3/stm32/timer.h>
+
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+@@ -59,9 +59,9 @@
+ 	DIT,
+ 	WORD,
+ };
+ 
+-int frequency_sel = 0;
++static uint32_t frequency_sel = 0U;
+ 
+ static void clock_setup(void)
+ {
+ 	rcc_clock_setup_pll(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
+
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+@@ -134,13 +134,13 @@
+ /*
+  * Get current timer value to calculate next
+  * compare register value.
+  */
+-uint16_t compare_time = timer_get_counter(TIM2);
++uint32_t compare_time = timer_get_counter(TIM2);
+ 
+ /* Calculate and set the next compare value. */
+-uint16_t frequency = frequency_sequence[frequency_sel++];
+-uint16_t new_time = compare_time + frequency;
++uint32_t frequency = frequency_sequence[frequency_sel++];
++uint32_t new_time = compare_time + frequency;
+ 
+ timer_set_oc_value(TIM2, TIM_OC1, new_time);
+ if (frequency_sel == ARRAY_LEN(frequency_sequence)) {
+ 	frequency_sel = 0;
+
+[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+[0m
+[0m$ [0mgit diff -- firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+Root cause found in `firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/timer/timer.c`.
+
+### What was wrong
+`TIM2` is a **32-bit timer** on STM32F4, but the code set auto-reload (`ARR`) to only `65535`:
+
+- Timer tick configured to ~5 kHz
+- Sequence timings are 500 ms to 3.5 s equivalent in ticks
+- ISR schedules next compare as `CCR1 = CNT + delta`
+
+When `CNT` is near 65535 and a large delta is added, `CCR1` lands beyond ARR and the match is deferred until counter wrap. That creates long dead gaps (~10+ seconds), exactly matching your symptom.
+
+### Fix applied
+I updated the timer range and compare math to 32-bit-safe operation:
+
+- `timer_set_period(TIM2, 0xFFFFFFFFU);` (full TIM2 range)
+- `frequency_sequence` changed to `uint32_t`
+- `frequency_sel` changed to `uint32_t`
+- ISR compare variables (`compare_time`, `frequency`, `new_time`) changed to `uint32_t`
+- Added `#include <stdint.h>`
+
+This removes the wrap-stall behavior and restores the intended Morse-like blink cadence (sub-second to few-second intervals).
+
+### Note
+A local build in this environment is blocked by missing libopencm3 path configuration (`OPENCM3_DIR`), but the logic-level defect and fix are complete and consistent with STM32F4 TIM2 behavior.

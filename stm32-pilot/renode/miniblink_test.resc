@@ -1,0 +1,38 @@
+:name: STM32F4 miniblink dynamic test
+:description: Loads the miniblink firmware under test and leaves the monitor open on a TCP port so an outside script can poll GPIOD's ODR register directly to observe (or fail to observe) LED toggling.
+
+# Run this with:
+#   renode --disable-gui -P 4567 miniblink_test.resc &
+# Then, from another terminal:
+#   python3 led_probe.py
+#
+# -P 4567 puts Renode's own monitor console on a TCP port instead of an
+# interactive prompt attached to this shell's stdin — without it, Renode
+# exits immediately when run in the background (no terminal to read from).
+# --disable-gui skips the GUI entirely, which this headless test doesn't need.
+#
+# Unlike usart_irq_test.resc, there's no UART bridge here — miniblink has no
+# serial peripheral at all. Instead, led_probe.py polls GPIOD's own ODR
+# (output data register, offset 0x14 from GPIOD's base 0x40020C00, per
+# platforms/cpus/stm32f4.repl in this Renode install) directly over the
+# monitor connection, checking bit 12 (the LED pin) across several reads.
+
+using sysbus
+mach create "miniblink_test"
+
+# stm32f4_discovery.repl ships with Renode itself (Antmicro's official
+# platform description for the real ST STM32F4-Discovery board). It wires
+# GPIOD pin 12 to a genuine Miscellaneous.LED model (UserLED), not a stub —
+# see recon/PLATFORM.md for how that was confirmed before this target was
+# added to the campaign.
+machine LoadPlatformDescription @platforms/boards/stm32f4_discovery.repl
+
+# Absolute path to the actual compiled firmware under test. Re-seed a
+# defect, rebuild, and this same script picks up the new .elf automatically.
+$elf?=@/Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.elf
+
+sysbus LoadELF $elf
+
+# Actually starts CPU execution — without this, the ELF is loaded but the
+# emulated core never runs, and GPIOD's ODR would never change either way.
+start

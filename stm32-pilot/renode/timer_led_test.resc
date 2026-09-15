@@ -1,0 +1,36 @@
+:name: STM32F4 timer LED-cadence dynamic test
+:description: Loads the timer example firmware under test and leaves the monitor open on a TCP port so an outside script can poll GPIOD's ODR register directly to observe (and time) LED toggling.
+
+# Run this with:
+#   renode --disable-gui -P 4568 timer_led_test.resc &
+# Then, from another terminal:
+#   python3 timer_led_probe.py
+#
+# -P 4568 (distinct from miniblink_test.resc's 4567, to allow running
+# alongside a concurrent miniblink test without a port clash) puts Renode's
+# own monitor console on a TCP port instead of an interactive prompt attached
+# to this shell's stdin. --disable-gui skips the GUI entirely.
+#
+# Same GPIOD ODR polling technique as miniblink_test.resc/led_probe.py, but
+# this test cares about TOGGLE RATE, not just toggle-vs-stuck: T4's seeded
+# defect (TIM_DIER_UIE instead of TIM_DIER_CC1IE) is predicted to still
+# toggle the LED, just at a ~13.1s period (65536 counts @ 5kHz update-event
+# wrap) instead of the intended sub-second-to-few-second Morse cadence.
+
+using sysbus
+mach create "timer_led_test"
+
+# stm32f4_discovery.repl ships with Renode itself (Antmicro's official
+# platform description for the real ST STM32F4-Discovery board). It wires
+# GPIOD pin 12 to a genuine Miscellaneous.LED model (UserLED), not a stub.
+machine LoadPlatformDescription @platforms/boards/stm32f4_discovery.repl
+
+# Overridable at the command line with -e '$elf=@/path/to/other.elf' or via
+# --variable; defaults to the T4-defect-seeded build captured in /tmp.
+$elf?=@/tmp/timer_T4_defect.elf
+
+sysbus LoadELF $elf
+
+# Actually starts CPU execution — without this, the ELF is loaded but the
+# emulated core never runs, and GPIOD's ODR would never change either way.
+start

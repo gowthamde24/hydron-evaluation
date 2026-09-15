@@ -1,0 +1,1357 @@
+[0m
+> code · Auto
+[0m
+[0m$ [0mcmake --build build
+Error: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/build is not a directory
+[0m
+[0m$ [0mls
+firmware
+references
+results
+scripts
+setup.sh
+transcripts
+[0m
+[0m$ [0mls
+libopencm3
+libopencm3-examples
+[0m
+[0m✱ [0mGlob "**/*.ld"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/CMakeLists.txt"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/build"[90m in . · 0 matches[0m
+[0m
+[0m$ [0mls
+Makefile
+README.md
+examples
+libopencm3
+scripts
+[0m
+[0m$ [0mmake -j4
+######## ERROR ########
+	libopencm3 is not initialized.
+	Please run:
+	$ git submodule init
+	$ git submodule update
+	before running make.
+######## ERROR ########
+make: *** [lib] Error 1
+[0m
+[0m✱ [0mGlob "**/*.ld"[90m in firmware/libopencm3-examples · 38 matches[0m
+[0m✱ [0mGlob "**/Makefile"[90m in firmware/libopencm3-examples/examples · 100 matches[0m
+[0m
+[0m$ [0mgit status --short
+M ../README.md
+ D pilot/diagrams/architecture.dot
+ D pilot/diagrams/architecture.png
+ D pilot/figure.png
+ D pilot/observations.md
+ D pilot/run_log.csv
+ D pilot/summary.md
+ D recon/CODE_MAP.md
+ D recon/DEFECT_CANDIDATES.md
+ D recon/HYDRON_PROMPTS.md
+ D recon/PLATFORM.md
+ D recon/ground_truth.md
+ D renode/echo_test.py
+ D renode/usart_irq_test.resc
+ D transcripts/GenC_OFF.log
+ D transcripts/GenC_ON.log
+ D transcripts/GenD_OFF.log
+ D transcripts/GenD_ON.log
+ D transcripts/S1_debug.log
+ D transcripts/S2_debug.log
+ D transcripts/S3_debug.log
+ D transcripts/S4_debug.log
+ D transcripts/S5_debug.log
+ D transcripts/capability_tests/A1_identify_only.log
+ D transcripts/capability_tests/A3_execute_only.log
+ D transcripts/capability_tests/B_no_bug_control.log
+?? ../.blind_test_stash.66078/
+?? ../.blind_test_transcripts.66078/
+?? results/
+?? scripts/
+?? transcripts/X2_debug.log
+[0m
+[0m$ [0mls
+PRESENTATION.pptx
+README.md
+REPORT.docx
+stm32-pilot
+[0m
+[0m✱ [0mGrep "region [`']rom[`'] overflowed|rom.*overflow"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*.map"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*.elf"[90m in . · 0 matches[0m
+[0m
+[0m$ [0mls -la
+total 32
+drwxr-xr-x@ 10 gowthamreddys  staff   320 Sep 15 11:41 .
+drwxr-xr-x@ 12 gowthamreddys  staff   384 Sep 15 11:41 ..
+-rw-r--r--@  1 gowthamreddys  staff   507 Sep 13 21:55 .gitignore
+drwxr-xr-x@  8 gowthamreddys  staff   256 Sep 15 10:45 .venv
+drwxr-xr-x@  4 gowthamreddys  staff   128 Sep 13 18:35 firmware
+drwxr-xr-x@  4 gowthamreddys  staff   128 Sep 13 22:19 references
+drwxr-xr-x@  9 gowthamreddys  staff   288 Sep 15 10:45 results
+drwxr-xr-x@  3 gowthamreddys  staff    96 Sep 15 10:48 scripts
+-rwxr-xr-x@  1 gowthamreddys  staff  9234 Sep 13 23:10 setup.sh
+drwxr-xr-x@  3 gowthamreddys  staff    96 Sep 15 11:41 transcripts
+[0m
+[0m✱ [0mGlob "**/*.[ch]"[90m in results · 0 matches[0m
+[0m✱ [0mGlob "**/Makefile"[90m in results · 0 matches[0m
+[0m✱ [0mGlob "**/CMakeLists.txt"[90m in results · 0 matches[0m
+[0m→ [0mRead transcripts/X2_debug.log
+[0m→ [0mRead scripts
+[0m→ [0mRead results
+[0m⚙ [0mhydron_local_recall Search: "overflow" (1 results)
+[0m⚙ [0mhydron_local_recall Read: Fixing ROM region linker overflow
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+@@ -22,9 +22,9 @@
+ 
+ /* Define memory regions. */
+ MEMORY
+ {
+-	rom (rx) : ORIGIN = 0x08000000, LENGTH = 4K
++	rom (rx) : ORIGIN = 0x08000000, LENGTH = 1024K
+ 	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 128K
+ }
+ 
+ /* Include the common ld script. */
+
+[0m
+[0m$ [0mmake -C examples/stm32/f4/stm32f4-discovery/usart_irq clean all
+../../../../rules.mk:66: Cannot find libopencm3 library in the standard search paths.
+../../../../rules.mk:67: *** Please specify it through OPENCM3_DIR variable!.  Stop.
+[0m
+[0m$ [0mgit submodule update --init --recursive
+Submodule 'libopencm3' (https://github.com/libopencm3/libopencm3.git) registered for path 'libopencm3'
+Cloning into '/Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/libopencm3'...
+Submodule path 'libopencm3': checked out '88e91c9a7cced8096c53fb942dcff1d7bdf6c91b'
+[0m
+[0m$ [0mmake -C examples/stm32/f4/stm32f4-discovery/usart_irq OPENCM3_DIR=../../../../libopencm3 clean all
+usart_irq.c:22:10: fatal error: libopencm3/stm32/rcc.h: No such file or directory
+   22 | #include <libopencm3/stm32/rcc.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make: *** [usart_irq.o] Error 1
+[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/Makefile
+[0m✗ [0mread failed
+[91m[1mError: [0mFile not found: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/Makefile.include
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/Makefile.include
+[0m✗ [0mread failed
+[91m[1mError: [0mFile not found: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/rules.mk
+[0m✱ [0mGlob "**/rules.mk"[90m in firmware/libopencm3-examples · 2 matches[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/rules.mk
+[0m
+[0m$ [0mls
+COPYING.GPL3
+COPYING.LGPL3
+HACKING
+HACKING_COMMON_DOC
+Makefile
+README.md
+doc
+include
+ld
+lib
+locm3.sublime-project
+mk
+scripts
+tests
+[0m
+[0m$ [0mmake -C examples/stm32/f4/stm32f4-discovery/usart_irq OPENCM3_DIR=../../../../../libopencm3 clean all
+In file included from ../../../../../libopencm3/include/libopencm3/cm3/nvic.h:147,
+                 from usart_irq.c:25:
+../../../../../libopencm3/include/libopencm3/dispatch/nvic.h:14:17: fatal error: libopencm3/stm32/f4/nvic.h: No such file or directory
+   14 | #       include <libopencm3/stm32/f4/nvic.h>
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make: *** [usart_irq.o] Error 1
+[0m
+[0m$ [0mmake -j4
+GENHDR  stm32/f1
+  GENHDR  stm32/f0
+  GENHDR  stm32/f2
+  GENHDR  stm32/f3
+  GENHDR  stm32/f4
+  GENHDR  stm32/f7
+  GENHDR  stm32/l0
+  GENHDR  stm32/l1
+  GENHDR  stm32/l4
+  GENHDR  stm32/g0
+  GENHDR  stm32/g4
+  GENHDR  stm32/h7
+  GENHDR  gd32/f1x0
+  GENHDR  lpc13xx
+  GENHDR  lpc17xx
+  GENHDR  lpc43xx/m4
+  GENHDR  lpc43xx/m0
+  GENHDR  lm3s
+  GENHDR  msp432/e4
+  GENHDR  efm32/tg
+  GENHDR  efm32/g
+  GENHDR  efm32/lg
+  GENHDR  efm32/gg
+  GENHDR  efm32/hg
+  GENHDR  efm32/ezr32wg
+  GENHDR  efm32/wg
+  GENHDR  nrf/51
+  GENHDR  nrf/52
+  GENHDR  sam/3a
+  GENHDR  sam/3n
+  GENHDR  sam/3s
+  GENHDR  sam/3u
+  GENHDR  sam/3x
+  GENHDR  sam/4l
+  GENHDR  sam/d
+  GENHDR  vf6xx
+  GENHDR  swm050
+  GENHDR  pac55xx
+  BUILD   lib/stm32/f0
+  BUILD   lib/stm32/f1
+  BUILD   lib/stm32/f2
+  BUILD   lib/stm32/f3
+  CC      crc_common_all.c
+  CC      adc.c
+  CC      adc.c
+  CC      adc.c
+  CC      crypto_common_f24.c
+  CC      adc_common_v1.c
+  CC      adc_common_v2.c
+  CC      adc_common_v2.c
+  CC      dac_common_all.c
+  CC      can.c
+  CC      can.c
+  CC      adc_common_v2_multi.c
+  CC      dac_common_v1.c
+  CC      can.c
+  CC      desig_common_all.c
+  CC      comparator.c
+  CC      crc_common_all.c
+  CC      desig_common_v1.c
+  CC      dac_common_all.c
+  CC      crc_common_all.c
+  CC      dma_common_f24.c
+  CC      crc_common_all.c
+  CC      crc_v2.c
+  CC      crc_v2.c
+  CC      dac_common_v1.c
+  CC      crs_common_all.c
+  CC      desig_common_all.c
+  CC      dac_common_all.c
+  CC      dac_common_all.c
+  CC      exti_common_all.c
+  CC      desig_common_v1.c
+  CC      dac_common_v1.c
+  CC      flash.c
+  CC      dac_common_v1.c
+  CC      dma_common_l1f013.c
+  CC      desig_common_all.c
+  CC      flash_common_all.c
+  CC      desig_common_all.c
+  CC      flash_common_f.c
+  CC      desig_common_v1.c
+  CC      exti_common_all.c
+  CC      desig_common_v1.c
+  CC      flash_common_f24.c
+  CC      dma_common_l1f013.c
+  CC      dma_common_l1f013.c
+  CC      flash.c
+  CC      flash_common_idcache.c
+  CC      exti_common_all.c
+  CC      flash_common_all.c
+  CC      dma_common_csel.c
+  CC      gpio_common_all.c
+  CC      flash_common_f.c
+  CC      exti_common_all.c
+  CC      flash.c
+  CC      gpio_common_f0234.c
+  CC      flash_common_f01.c
+  CC      flash.c
+  CC      flash_common_all.c
+  CC      gpio.c
+  CC      hash_common_f24.c
+  CC      flash_common_all.c
+  CC      flash_common_f.c
+  CC      i2c_common_v1.c
+  CC      gpio_common_all.c
+  CC      flash_common_f.c
+  CC      gpio_common_all.c
+  CC      flash_common_f01.c
+  CC      i2c_common_v1.c
+  CC      gpio_common_f0234.c
+  CC      gpio_common_all.c
+  CC      iwdg_common_all.c
+  CC      i2c_common_v2.c
+  CC      iwdg_common_all.c
+  CC      gpio_common_f0234.c
+  CC      rcc.c
+  CC      pwr_common_v1.c
+  CC      iwdg_common_all.c
+  CC      iwdg_common_all.c
+  CC      rcc_common_all.c
+  CC      rcc.c
+  CC      i2c_common_v2.c
+  CC      opamp_common_all.c
+  CC      rng_common_v1.c
+  CC      opamp_common_v1.c
+  CC      pwr_common_v1.c
+  CC      rtc_common_l1f024.c
+  CC      pwr_common_v1.c
+  CC      rcc_common_all.c
+  CC      rcc.c
+  CC      rcc.c
+  CC      rtc.c
+  CC      spi_common_all.c
+  CC      spi_common_all.c
+  CC      rcc_common_all.c
+  CC      spi_common_v1.c
+  CC      rcc_common_all.c
+  CC      spi_common_v1_frf.c
+  CC      rtc_common_l1f024.c
+  CC      spi_common_v1.c
+  CC      rtc_common_l1f024.c
+  CC      timer_common_all.c
+  CC      timer.c
+  CC      spi_common_all.c
+  CC      spi_common_all.c
+  CC      timer_common_all.c
+  CC      spi_common_v2.c
+  CC      spi_common_v2.c
+  CC      timer_common_f0234.c
+  CC      timer_common_all.c
+  CC      timer_common_f24.c
+  CC      timer_common_all.c
+  CC      usart_common_all.c
+  CC      usart_common_all.c
+  CC      usart_common_f124.c
+  CC      usart_common_f124.c
+  CC      mac.c
+  CC      usb.c
+  CC      timer_common_f0234.c
+  CC      timer_common_f0234.c
+  CC      mac_stm32fxx7.c
+  CC      usart_common_v2.c
+  CC      usart_common_all.c
+  CC      usb_standard.c
+  CC      usart_common_all.c
+  CC      usart_common_v2.c
+  CC      phy.c
+  CC      phy_ksz80x1.c
+  CC      usb.c
+  CC      usb.c
+  CC      usb_control.c
+  CC      usb.c
+  CC      usb_control.c
+  CC      usb_control.c
+  CC      usb_control.c
+  CC      usb_msc.c
+  CC      usb_standard.c
+  CC      usb_standard.c
+  CC      usb_standard.c
+  CC      usb_hid.c
+  CC      usb_audio.c
+  CC      usb_msc.c
+  CC      usb_msc.c
+  CC      usb_cdc.c
+  CC      usb_msc.c
+  CC      usb_midi.c
+  CC      usb_dwc_common.c
+  CC      usb_hid.c
+  CC      usb_hid.c
+  CC      usb_hid.c
+  CC      usb_audio.c
+  CC      usb_audio.c
+  CC      usb_audio.c
+  CC      usb_cdc.c
+  CC      usb_cdc.c
+  CC      usb_f107.c
+  CC      usb_cdc.c
+  CC      usb_midi.c
+  CC      usb_midi.c
+  CC      usb_midi.c
+  CC      st_usbfs_core.c
+  CC      st_usbfs_core.c
+  CC      usb_f207.c
+  CC      usb_dwc_common.c
+  CC      vector.c
+  CC      st_usbfs_v2.c
+  CC      st_usbfs_v1.c
+  CC      systick.c
+  CC      usb_f107.c
+  CC      scb.c
+  CC      vector.c
+  CC      vector.c
+  CC      nvic.c
+  CC      systick.c
+  CC      st_usbfs_core.c
+  CC      systick.c
+  CC      scb.c
+  CC      assert.c
+  CC      scb.c
+  CC      sync.c
+  CC      nvic.c
+  CC      nvic.c
+  CC      st_usbfs_v1.c
+  CC      dwt.c
+  CC      assert.c
+  CC      assert.c
+  CC      vector.c
+  AR      libopencm3_stm32f2.a
+  CC      sync.c
+  CC      sync.c
+  CC      systick.c
+  CC      dwt.c
+  CC      dwt.c
+  AR      libopencm3_stm32f0.a
+  CC      scb.c
+  BUILD   lib/stm32/f4
+  AR      libopencm3_stm32f3.a
+  CC      nvic.c
+  CC      adc_common_v1.c
+  BUILD   lib/stm32/f7
+  CC      assert.c
+  CC      adc_common_v1.c
+  CC      sync.c
+  CC      dwt.c
+  BUILD   lib/stm32/l0
+  CC      adc_common_v1_multi.c
+  AR      libopencm3_stm32f1.a
+  CC      adc_common_v2.c
+  CC      adc_common_v1_multi.c
+  CC      adc_common_f47.c
+  BUILD   lib/stm32/l1
+  CC      adc_common_f47.c
+  CC      adc.c
+  CC      crc_common_all.c
+  CC      can.c
+  CC      crc_v2.c
+  CC      adc_common_v1.c
+  CC      can.c
+  CC      crs_common_all.c
+  CC      crc_common_all.c
+  CC      desig_common_all.c
+  CC      crc_common_all.c
+  CC      adc_common_v1_multi.c
+  CC      crypto_common_f24.c
+  CC      desig_common_v1.c
+  CC      crc_v2.c
+  CC      flash.c
+  CC      dma_common_l1f013.c
+  CC      crypto.c
+  CC      dac_common_all.c
+  CC      crc_common_all.c
+  CC      dac_common_all.c
+  CC      dac_common_all.c
+  CC      dac_common_v1.c
+  CC      dma_common_csel.c
+  CC      dcmi_common_f47.c
+  CC      dac_common_v1.c
+  CC      dac_common_v1.c
+  CC      exti_common_all.c
+  CC      desig_common_all.c
+  CC      desig_common_all.c
+  CC      dcmi_common_f47.c
+  CC      flash_common_all.c
+  CC      desig_common_all.c
+  CC      desig.c
+  CC      desig.c
+  CC      flash_common_l01.c
+  CC      desig_common_v1.c
+  CC      dma_common_f24.c
+  CC      dma_common_l1f013.c
+  CC      gpio_common_all.c
+  CC      dma_common_f24.c
+  CC      gpio_common_f0234.c
+  CC      exti_common_all.c
+  CC      dma2d_common_f47.c
+  CC      flash_common_all.c
+  CC      i2c_common_v2.c
+  CC      dsi_common_f47.c
+  CC      dma2d_common_f47.c
+  CC      flash_common_l01.c
+  CC      dsi_common_f47.c
+  CC      exti_common_all.c
+  CC      exti_common_all.c
+  CC      iwdg_common_all.c
+  CC      gpio_common_all.c
+  CC      flash_common_all.c
+  CC      lptimer_common_all.c
+  CC      gpio_common_f0234.c
+  CC      flash.c
+  CC      flash_common_f.c
+  CC      flash_common_all.c
+  CC      flash_common_f24.c
+  CC      i2c_common_v1.c
+  CC      pwr_common_v1.c
+  CC      flash_common_f.c
+  CC      pwr_common_v2.c
+  CC      flash.c
+  CC      flash_common_f24.c
+  CC      iwdg_common_all.c
+  CC      fmc_common_f47.c
+  CC      rcc.c
+  CC      flash_common_idcache.c
+  CC      lcd.c
+  CC      gpio_common_all.c
+  CC      fmc_common_f47.c
+  CC      pwr_common_v1.c
+  CC      gpio_common_f0234.c
+  CC      rcc_common_all.c
+  CC      gpio_common_all.c
+  CC      pwr_common_v2.c
+  CC      i2c_common_v2.c
+  CC      rng_common_v1.c
+  CC      gpio_common_f0234.c
+  CC      rcc.c
+  CC      rtc_common_l1f024.c
+  CC      hash_common_f24.c
+  CC      iwdg_common_all.c
+  CC      rcc_common_all.c
+  CC      spi_common_all.c
+  CC      i2c_common_v1.c
+  CC      lptimer_common_all.c
+  CC      rtc_common_l1f024.c
+  CC      spi_common_v1.c
+  CC      iwdg_common_all.c
+  CC      ltdc_common_f47.c
+  CC      spi_common_all.c
+  CC      spi_common_v1_frf.c
+  CC      lptimer_common_all.c
+  CC      pwr.c
+  CC      timer_common_all.c
+  CC      ltdc_common_f47.c
+  CC      rcc.c
+  CC      spi_common_v1.c
+  CC      pwr_common_v1.c
+  CC      spi_common_v1_frf.c
+  CC      timer.c
+  CC      pwr.c
+  CC      rcc_common_all.c
+  CC      timer_common_all.c
+  CC      rcc_common_all.c
+  CC      usart_common_all.c
+  CC      rng_common_v1.c
+  CC      rcc.c
+  CC      usart_common_v2.c
+  CC      spi_common_all.c
+  CC      usb.c
+  CC      usart_common_all.c
+  CC      spi_common_v2.c
+  CC      rng_common_v1.c
+  CC      usb_control.c
+  CC      usart_common_f124.c
+  CC      timer_common_all.c
+  CC      rtc_common_l1f024.c
+  CC      usb.c
+  CC      usb_standard.c
+  CC      rtc.c
+  CC      usb_control.c
+  CC      spi_common_all.c
+  CC      usart_common_all.c
+  CC      usb_standard.c
+  CC      spi_common_v1.c
+  CC      usb_msc.c
+  CC      usart_common_v2.c
+  CC      spi_common_v1_frf.c
+  CC      quadspi_common_v1.c
+  CC      timer_common_all.c
+  CC      mac.c
+  CC      usb_msc.c
+  CC      usb_hid.c
+  CC      usb_audio.c
+  CC      phy.c
+  CC      usb_cdc.c
+  CC      mac_stm32fxx7.c
+  CC      usb_midi.c
+  CC      usb_hid.c
+  CC      timer_common_f0234.c
+  CC      st_usbfs_core.c
+  CC      usb_audio.c
+  CC      timer_common_f24.c
+  CC      phy_ksz80x1.c
+  CC      usb_cdc.c
+  CC      usb_midi.c
+  CC      usart_common_all.c
+  CC      usb.c
+  CC      st_usbfs_v2.c
+  CC      st_usbfs_core.c
+  CC      usart_common_f124.c
+  CC      vector.c
+  CC      usb_standard.c
+  CC      quadspi_common_v1.c
+  CC      systick.c
+  CC      st_usbfs_v1.c
+  CC      usb.c
+  CC      scb.c
+  CC      vector.c
+  CC      nvic.c
+  CC      usb_control.c
+  CC      usb_standard.c
+  CC      systick.c
+  CC      assert.c
+  CC      scb.c
+  CC      sync.c
+  CC      usb_audio.c
+  CC      nvic.c
+  CC      usb_cdc.c
+  CC      dwt.c
+  CC      usb_control.c
+  CC      usb_hid.c
+  AR      libopencm3_stm32l0.a
+  CC      assert.c
+  CC      usb_midi.c
+  CC      sync.c
+  CC      usb_msc.c
+  CC      usb_msc.c
+  CC      usb_hid.c
+  CC      dwt.c
+  CC      usb_audio.c
+  AR      libopencm3_stm32l1.a
+  CC      usb_cdc.c
+  CC      usb_midi.c
+  CC      usb_dwc_common.c
+  BUILD   lib/stm32/l4
+  BUILD   lib/stm32/g0
+  CC      usb_dwc_common.c
+  CC      adc.c
+  CC      adc.c
+  CC      adc_common_v2.c
+  CC      adc_common_v2.c
+  CC      usb_f107.c
+  CC      adc_common_v2_multi.c
+  CC      usb_f107.c
+  CC      crc_common_all.c
+  CC      usb_f207.c
+  CC      can.c
+  CC      usb_f207.c
+  CC      dac_common_all.c
+  CC      vector.c
+  CC      mac.c
+  CC      dac_common_v1.c
+  CC      systick.c
+  CC      crc_common_all.c
+  CC      phy.c
+  CC      desig_common_all.c
+  CC      scb.c
+  CC      crc_v2.c
+  CC      mac_stm32fxx7.c
+  CC      desig_common_v1.c
+  CC      nvic.c
+  CC      crs_common_all.c
+  CC      dma_common_l1f013.c
+  CC      dac_common_all.c
+  CC      assert.c
+  CC      phy_ksz80x1.c
+  CC      sync.c
+  CC      vector.c
+  CC      dmamux.c
+  CC      dac_common_v1.c
+  CC      dwt.c
+  CC      systick.c
+  CC      dma_common_l1f013.c
+  AR      libopencm3_stm32f7.a
+  CC      exti_common_all.c
+  CC      scb.c
+  CC      dma_common_csel.c
+  CC      exti_common_v2.c
+  CC      flash.c
+  CC      nvic.c
+  CC      exti_common_all.c
+  CC      flash_common_all.c
+  CC      assert.c
+  CC      gpio_common_all.c
+  CC      gpio_common_f0234.c
+  CC      flash.c
+  CC      sync.c
+  BUILD   lib/stm32/g4
+  CC      adc.c
+  CC      dwt.c
+  CC      i2c_common_v2.c
+  CC      flash_common_all.c
+  AR      libopencm3_stm32f4.a
+  CC      flash_common_f.c
+  CC      flash_common_idcache.c
+  CC      adc_common_v2.c
+  CC      iwdg_common_all.c
+  BUILD   lib/stm32/h7
+  CC      gpio_common_all.c
+  CC      dac_common_all.c
+  CC      lptimer_common_all.c
+  CC      adc_common_v2_multi.c
+  CC      gpio_common_f0234.c
+  CC      pwr.c
+  CC      dac_common_v2.c
+  CC      cordic_common_v1.c
+  CC      i2c_common_v2.c
+  CC      rcc.c
+  CC      exti_common_all.c
+  CC      crs_common_all.c
+  CC      fdcan.c
+  CC      iwdg_common_all.c
+  CC      rcc_common_all.c
+  CC      crc_common_all.c
+  CC      lptimer_common_all.c
+  CC      crc_v2.c
+  CC      rng_common_v1.c
+  CC      fdcan_common.c
+  CC      pwr.c
+  CC      dac_common_all.c
+  CC      spi_common_all.c
+  CC      rcc.c
+  CC      dac_common_v2.c
+  CC      flash_common_all.c
+  CC      spi_common_v2.c
+  CC      dma_common_l1f013.c
+  CC      flash_common_f.c
+  CC      timer_common_all.c
+  CC      rcc_common_all.c
+  CC      flash_common_f24.c
+  CC      dmamux.c
+  CC      rng_common_v1.c
+  CC      fmc_common_f47.c
+  CC      rtc_common_l1f024.c
+  CC      gpio_common_all.c
+  CC      fdcan.c
+  CC      usart_common_all.c
+  CC      gpio_common_f0234.c
+  CC      spi_common_all.c
+  CC      fdcan_common.c
+  CC      usart_common_v2.c
+  CC      pwr.c
+  CC      spi_common_v2.c
+  CC      vector.c
+  CC      rcc.c
+  CC      flash.c
+  CC      timer_common_all.c
+  CC      systick.c
+  CC      flash_common_all.c
+  CC      scb.c
+  CC      rcc_common_all.c
+  CC      flash_common_f.c
+  CC      nvic.c
+  CC      flash_common_idcache.c
+  CC      rng_common_v1.c
+  CC      assert.c
+  CC      usart_common_all.c
+  CC      gpio_common_all.c
+  CC      sync.c
+  CC      spi_common_all.c
+  CC      dwt.c
+  CC      gpio_common_f0234.c
+  CC      usart_common_v2.c
+  AR      libopencm3_stm32g0.a
+  CC      i2c_common_v2.c
+  CC      spi_common_v2.c
+  CC      quadspi_common_v1.c
+  BUILD   lib/gd32/f1x0
+  CC      flash.c
+  CC      usb.c
+  CC      timer_common_all.c
+  CC      flash_common_all.c
+  CC      opamp_common_all.c
+  CC      usb_control.c
+  CC      flash_common_f.c
+  CC      opamp_common_v2.c
+  CC      flash_common_f01.c
+  CC      pwr.c
+  CC      usb_standard.c
+  CC      gpio_common_all.c
+  CC      usart_common_v2.c
+  CC      rcc.c
+  CC      gpio_common_f0234.c
+  CC      usart_common_fifos.c
+  CC      rcc.c
+  CC      quadspi_common_v1.c
+  CC      usb_msc.c
+  CC      rcc_common_all.c
+  CC      vector.c
+  CC      rcc_common_all.c
+  CC      rng_common_v1.c
+  CC      systick.c
+  CC      spi_common_all.c
+  CC      vector.c
+  CC      usb_hid.c
+  CC      scb.c
+  CC      usb_audio.c
+  CC      systick.c
+  CC      usb_cdc.c
+  CC      nvic.c
+  CC      spi_common_v2.c
+  CC      scb.c
+  CC      usb_midi.c
+  CC      assert.c
+  CC      st_usbfs_core.c
+  CC      timer_common_all.c
+  CC      nvic.c
+  CC      sync.c
+  CC      assert.c
+  CC      dwt.c
+  CC      sync.c
+  CC      st_usbfs_v2.c
+  AR      libopencm3_stm32h7.a
+  CC      dwt.c
+  BUILD   lib/lpc13xx
+  CC      timer_common_f0234.c
+  CC      usb_dwc_common.c
+  CC      gpio.c
+  AR      libopencm3_gd32f1x0.a
+  BUILD   lib/lpc17xx
+  CC      quadspi_common_v1.c
+  CC      vector.c
+  CC      gpio.c
+  CC      usart_common_v2.c
+  CC      pwr.c
+  CC      systick.c
+  CC      vector.c
+  CC      usb_f107.c
+  CC      usart_common_all.c
+  CC      scb.c
+  CC      systick.c
+  CC      nvic.c
+  CC      vector.c
+  CC      usb.c
+  CC      scb.c
+  CC      assert.c
+  CC      systick.c
+  CC      sync.c
+  CC      nvic.c
+  CC      usb_control.c
+  CC      scb.c
+  CC      dwt.c
+  CC      assert.c
+  CC      nvic.c
+  AR      libopencm3_lpc13xx.a
+  CC      sync.c
+  CC      usb_standard.c
+  BUILD   lib/lpc43xx/m4
+  CC      assert.c
+  CC      gpio.c
+  CC      dwt.c
+  CC      sync.c
+  CC      scu.c
+  AR      libopencm3_lpc17xx.a
+  CC      dwt.c
+  BUILD   lib/lpc43xx/m0
+  CC      i2c.c
+  CC      gpio.c
+  CC      usb_audio.c
+In file included from ../i2c.c:42:
+../../../include/libopencm3/lpc43xx/cgu.h:36: warning: header guard 'LPC43XX_CGU_H' followed by '#define' of a different macro [-Wheader-guard]
+   36 | #ifndef LPC43XX_CGU_H
+../../../include/libopencm3/lpc43xx/cgu.h:37: note: 'CGU_LPC43XX_CGU_H' is defined here; did you mean 'LPC43XX_CGU_H'?
+   37 | #define CGU_LPC43XX_CGU_H
+  AR      libopencm3_stm32l4.a
+  CC      scu.c
+  CC      usb_cdc.c
+  CC      ssp.c
+  CC      usb_hid.c
+In file included from ../ssp.c:36:
+../../../include/libopencm3/lpc43xx/cgu.h:36: warning: header guard 'LPC43XX_CGU_H' followed by '#define' of a different macro [-Wheader-guard]
+   36 | #ifndef LPC43XX_CGU_H
+../../../include/libopencm3/lpc43xx/cgu.h:37: note: 'CGU_LPC43XX_CGU_H' is defined here; did you mean 'LPC43XX_CGU_H'?
+   37 | #define CGU_LPC43XX_CGU_H
+  CC      i2c.c
+  CC      uart.c
+In file included from ../i2c.c:42:
+../../../include/libopencm3/lpc43xx/cgu.h:36: warning: header guard 'LPC43XX_CGU_H' followed by '#define' of a different macro [-Wheader-guard]
+   36 | #ifndef LPC43XX_CGU_H
+../../../include/libopencm3/lpc43xx/cgu.h:37: note: 'CGU_LPC43XX_CGU_H' is defined here; did you mean 'LPC43XX_CGU_H'?
+   37 | #define CGU_LPC43XX_CGU_H
+  CC      usb_midi.c
+  BUILD   lib/lm3s
+In file included from ../uart.c:21:
+../../../include/libopencm3/lpc43xx/cgu.h:36: warning: header guard 'LPC43XX_CGU_H' followed by '#define' of a different macro [-Wheader-guard]
+   36 | #ifndef LPC43XX_CGU_H
+../../../include/libopencm3/lpc43xx/cgu.h:37: note: 'CGU_LPC43XX_CGU_H' is defined here; did you mean 'LPC43XX_CGU_H'?
+   37 | #define CGU_LPC43XX_CGU_H
+  CC      assert.c
+  CC      usb_msc.c
+  CC      ssp.c
+  CC      gpio.c
+  CC      timer.c
+In file included from ../ssp.c:36:
+../../../include/libopencm3/lpc43xx/cgu.h:36: warning: header guard 'LPC43XX_CGU_H' followed by '#define' of a different macro [-Wheader-guard]
+   36 | #ifndef LPC43XX_CGU_H
+../../../include/libopencm3/lpc43xx/cgu.h:37: note: 'CGU_LPC43XX_CGU_H' is defined here; did you mean 'LPC43XX_CGU_H'?
+   37 | #define CGU_LPC43XX_CGU_H
+  CC      rcc.c
+  CC      uart.c
+  CC      ipc.c
+In file included from ../uart.c:21:
+../../../include/libopencm3/lpc43xx/cgu.h:36: warning: header guard 'LPC43XX_CGU_H' followed by '#define' of a different macro [-Wheader-guard]
+   36 | #ifndef LPC43XX_CGU_H
+../../../include/libopencm3/lpc43xx/cgu.h:37: note: 'CGU_LPC43XX_CGU_H' is defined here; did you mean 'LPC43XX_CGU_H'?
+   37 | #define CGU_LPC43XX_CGU_H
+  CC      usart.c
+  CC      vector.c
+  CC      st_usbfs_core.c
+  CC      timer.c
+  CC      vector.c
+  CC      vector.c
+  CC      systick.c
+  CC      systick.c
+  CC      systick.c
+  CC      scb.c
+  CC      st_usbfs_v2.c
+  CC      scb.c
+  CC      scb.c
+  CC      nvic.c
+  CC      vector.c
+  CC      nvic.c
+  CC      nvic.c
+  CC      assert.c
+  CC      systick.c
+  CC      sync.c
+  CC      assert.c
+  CC      sync.c
+  CC      dwt.c
+  CC      scb.c
+  CC      sync.c
+  CC      dwt.c
+  AR      libopencm3_lm3s.a
+  CC      dwt.c
+  CC      nvic.c
+  AR      libopencm3_lpc43xx.a
+  BUILD   lib/lm4f
+  AR      libopencm3_lpc43xx_m0.a
+  CC      assert.c
+  CC      assert.c
+  CC      sync.c
+  BUILD   lib/msp432/e4
+  CC      gpio.c
+  CC      gpio.c
+  CC      dwt.c
+  BUILD   lib/efm32/tg
+  CC      vector.c
+  AR      libopencm3_stm32g4.a
+  CC      rcc.c
+  CC      systemcontrol.c
+  CC      systick.c
+  BUILD   lib/efm32/g
+  CC      systemcontrol.c
+  CC      scb.c
+  CC      vector.c
+  CC      vector.c
+  CC      uart.c
+  CC      nvic.c
+  CC      systick.c
+  CC      systick.c
+  CC      scb.c
+  CC      assert.c
+  CC      scb.c
+  CC      vector.c
+  CC      sync.c
+  CC      nvic.c
+  CC      nvic.c
+  CC      usb.c
+  CC      dwt.c
+  CC      assert.c
+  CC      assert.c
+  AR      libopencm3_efm32tg.a
+  CC      sync.c
+  CC      usb_control.c
+  CC      sync.c
+  CC      dwt.c
+  CC      dwt.c
+  BUILD   lib/efm32/lg
+  AR      libopencm3_msp432e4.a
+  CC      acmp_common.c
+  AR      libopencm3_efm32g.a
+  BUILD   lib/efm32/gg
+  CC      usb_standard.c
+  BUILD   lib/efm32/hg
+  CC      vector.c
+  CC      adc_common.c
+  CC      cmu.c
+  CC      systick.c
+  CC      gpio_common.c
+  CC      scb.c
+  CC      burtc_common.c
+  CC      usb_msc.c
+  CC      timer_common.c
+  CC      nvic.c
+  CC      cmu_common.c
+  CC      usb.c
+  CC      assert.c
+  CC      dac_common.c
+  CC      sync.c
+  CC      usb_hid.c
+  CC      usb_control.c
+  CC      dma_common.c
+  CC      dwt.c
+  CC      usb_audio.c
+  AR      libopencm3_efm32gg.a
+  CC      usb_cdc.c
+  CC      usb_standard.c
+  CC      usb_msc.c
+  CC      usb_midi.c
+  CC      emu_common.c
+  CC      usb_lm4f.c
+  CC      gpio_common.c
+  CC      i2c_common.c
+  BUILD   lib/efm32/wg
+  CC      usb_hid.c
+  CC      acmp_common.c
+  CC      letimer_common.c
+  CC      systick.c
+  CC      usb_audio.c
+  CC      adc_common.c
+  CC      msc_common.c
+  CC      usb_cdc.c
+  CC      scb.c
+  CC      prs_common.c
+  CC      usb_midi.c
+  CC      nvic.c
+  CC      usb_dwc_common.c
+  CC      rmu_common.c
+  CC      burtc_common.c
+  CC      rtc_common.c
+  CC      sync.c
+  CC      cmu_common.c
+  CC      timer_common.c
+  CC      dwt.c
+  CC      usart_common.c
+  CC      dac_common.c
+  CC      usb_efm32hg.c
+  AR      libopencm3_lm4f.a
+  CC      wdog_common.c
+  CC      dma_common.c
+  BUILD   lib/efm32/ezr32wg
+  CC      vector.c
+  CC      usb.c
+  CC      acmp_common.c
+  CC      systick.c
+  CC      adc_common.c
+  CC      usb_control.c
+  CC      scb.c
+  CC      emu_common.c
+  CC      gpio_common.c
+  CC      nvic.c
+  CC      usb_standard.c
+  CC      burtc_common.c
+  CC      assert.c
+  CC      cmu_common.c
+  CC      i2c_common.c
+  CC      sync.c
+  CC      letimer_common.c
+  CC      dac_common.c
+  CC      dwt.c
+  CC      msc_common.c
+  CC      usb_msc.c
+  AR      libopencm3_efm32hg.a
+  CC      prs_common.c
+  CC      dma_common.c
+  BUILD   lib/nrf/51
+  CC      rmu_common.c
+  CC      clock_common.c
+  CC      rtc_common.c
+  CC      clock.c
+  CC      usb_hid.c
+  CC      timer_common.c
+  CC      emu_common.c
+  CC      gpio.c
+  CC      usb_audio.c
+  CC      gpio_common.c
+  CC      usart_common.c
+  CC      usb_cdc.c
+  CC      i2c_common.c
+  CC      wdog_common.c
+  CC      usb_midi.c
+  CC      i2c_common.c
+  CC      usb_efm32.c
+  CC      usb.c
+  CC      ppi.c
+  CC      letimer_common.c
+  CC      msc_common.c
+  CC      rtc.c
+  CC      usb_control.c
+  CC      prs_common.c
+  CC      radio_common.c
+  CC      vector.c
+  CC      rmu_common.c
+  CC      usb_standard.c
+  CC      systick.c
+  CC      radio.c
+  CC      rtc_common.c
+  CC      scb.c
+  CC      timer.c
+  CC      timer_common.c
+In file included from ../../../include/libopencm3/nrf/51/timer.h:35,
+                 from ../../../include/libopencm3/nrf/timer.h:31,
+                 from ../common/timer.c:32:
+../common/timer.c: In function 'timer_get_ticks':
+../../../include/libopencm3/cm3/common.h:69:34: warning: array subscript 0 is outside array bounds of 'volatile uint32_t[0]' {aka 'volatile long unsigned int[]'} [-Warray-bounds=]
+   69 | #define MMIO32(addr)            (*(volatile uint32_t *)(addr))
+      |                                 ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../../include/libopencm3/nrf/common/timer.h:72:41: note: in expansion of macro 'MMIO32'
+   72 | #define TIMER_CC(T, C)                  MMIO32((T) + 0x540 + 0x4 * (C))
+      |                                         ^~~~~~
+../common/timer.c:47:14: note: in expansion of macro 'TIMER_CC'
+   47 |         cc = TIMER_CC(0, 0);
+      |              ^~~~~~~~
+cc1: note: source object is likely at address zero
+  CC      nvic.c
+  CC      uart.c
+  CC      usart_common.c
+  CC      usb_msc.c
+  CC      wdog_common.c
+  CC      assert.c
+  CC      vector.c
+  CC      usb.c
+  CC      sync.c
+  CC      systick.c
+  CC      dwt.c
+  CC      usb_control.c
+  CC      usb_hid.c
+  CC      scb.c
+  AR      libopencm3_efm32lg.a
+  CC      usb_audio.c
+  CC      nvic.c
+  CC      usb_cdc.c
+  BUILD   lib/nrf/52
+  CC      usb_standard.c
+  CC      clock_common.c
+  CC      assert.c
+  CC      usb_midi.c
+  CC      gpio.c
+  CC      usb_efm32.c
+  CC      sync.c
+  CC      dwt.c
+  CC      i2c.c
+  AR      libopencm3_nrf51.a
+  CC      usb_msc.c
+  CC      i2c_common.c
+  BUILD   lib/sam/3a
+  CC      vector.c
+  CC      gpio_common_all.c
+  CC      ppi.c
+  CC      gpio_common_3a3u3x.c
+  CC      systick.c
+  CC      radio_common.c
+  CC      usb_hid.c
+  CC      pmc.c
+  CC      scb.c
+  CC      usb_audio.c
+  CC      usart_common_all.c
+  CC      nvic.c
+  CC      rtc.c
+  CC      usb_cdc.c
+  CC      usb_midi.c
+  CC      timer.c
+  CC      assert.c
+  CC      usart_common_3.c
+  CC      usb_efm32.c
+In file included from ../../../include/libopencm3/nrf/52/timer.h:35,
+                 from ../../../include/libopencm3/nrf/timer.h:33,
+                 from ../common/timer.c:32:
+../common/timer.c: In function 'timer_get_ticks':
+../../../include/libopencm3/cm3/common.h:69:34: warning: array subscript 0 is outside array bounds of 'volatile uint32_t[0]' {aka 'volatile long unsigned int[]'} [-Warray-bounds=]
+   69 | #define MMIO32(addr)            (*(volatile uint32_t *)(addr))
+      |                                 ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../../include/libopencm3/nrf/common/timer.h:72:41: note: in expansion of macro 'MMIO32'
+   72 | #define TIMER_CC(T, C)                  MMIO32((T) + 0x540 + 0x4 * (C))
+      |                                         ^~~~~~
+../common/timer.c:47:14: note: in expansion of macro 'TIMER_CC'
+   47 |         cc = TIMER_CC(0, 0);
+      |              ^~~~~~~~
+cc1: note: source object is likely at address zero
+  CC      sync.c
+  CC      uart.c
+  CC      vector.c
+  CC      dwt.c
+  CC      systick.c
+  CC      vector.c
+  AR      libopencm3_efm32wg.a
+  CC      scb.c
+  CC      vector.c
+  CC      systick.c
+  BUILD   lib/sam/3n
+  CC      nvic.c
+  CC      gpio_common_all.c
+  CC      systick.c
+  CC      scb.c
+  CC      gpio_common_3n3s.c
+  CC      assert.c
+  CC      scb.c
+  CC      nvic.c
+  CC      pmc.c
+  CC      sync.c
+  CC      nvic.c
+  CC      assert.c
+  CC      dwt.c
+  CC      usart_common_all.c
+  CC      sync.c
+  CC      assert.c
+  AR      libopencm3_sam3a.a
+  BUILD   lib/sam/3s
+  CC      sync.c
+  CC      usart_common_3.c
+  CC      dwt.c
+  CC      gpio_common_all.c
+  CC      vector.c
+  CC      dwt.c
+  AR      libopencm3_nrf52.a
+  CC      gpio_common_3n3s.c
+  CC      systick.c
+  AR      libopencm3_ezr32wg.a
+  CC      scb.c
+  CC      pmc.c
+  BUILD   lib/sam/3u
+  CC      nvic.c
+  BUILD   lib/sam/3x
+  CC      gpio_common_all.c
+  CC      usart_common_all.c
+  CC      gpio_common_all.c
+  CC      gpio_common_3a3u3x.c
+  CC      assert.c
+  CC      gpio_common_3a3u3x.c
+  CC      usart_common_3.c
+  CC      pmc.c
+  CC      sync.c
+  CC      pmc.c
+  CC      vector.c
+  CC      dwt.c
+  CC      usart_common_all.c
+  CC      usart_common_all.c
+  CC      systick.c
+  AR      libopencm3_sam3n.a
+  BUILD   lib/sam/4l
+  CC      usart_common_3.c
+  CC      scb.c
+  CC      usart_common_3.c
+  CC      adcife.c
+  CC      vector.c
+  CC      vector.c
+  CC      nvic.c
+  CC      gpio.c
+  CC      systick.c
+  CC      systick.c
+  CC      assert.c
+  CC      pm.c
+  CC      scb.c
+  CC      sync.c
+  CC      scb.c
+  CC      scif.c
+  CC      nvic.c
+  CC      dwt.c
+  CC      nvic.c
+  AR      libopencm3_sam3s.a
+  CC      usart_common_all.c
+  CC      assert.c
+  CC      assert.c
+  BUILD   lib/sam/d
+  CC      sync.c
+  CC      port.c
+  CC      sync.c
+  CC      usart.c
+  CC      dwt.c
+  CC      dwt.c
+  CC      vector.c
+  CC      vector.c
+  AR      libopencm3_sam3u.a
+  AR      libopencm3_sam3x.a
+  CC      systick.c
+  CC      systick.c
+  BUILD   lib/vf6xx
+  BUILD   lib/swm050
+  CC      ccm.c
+  CC      clk.c
+  CC      scb.c
+  CC      scb.c
+  CC      flash.c
+  CC      gpio.c
+  CC      nvic.c
+  CC      nvic.c
+  CC      gpio.c
+  CC      iomuxc.c
+  CC      assert.c
+  CC      assert.c
+  CC      sync.c
+  CC      uart.c
+  CC      pwr.c
+  CC      sync.c
+  CC      dwt.c
+  CC      syscon.c
+  CC      vector.c
+  AR      libopencm3_samd.a
+  CC      dwt.c
+  CC      timer.c
+  CC      systick.c
+  AR      libopencm3_sam4l.a
+  CC      scb.c
+  BUILD   lib/pac55xx
+  CC      wdt.c
+  CC      vector.c
+  CC      can.c
+  CC      nvic.c
+  CC      systick.c
+  CC      scb.c
+  CC      assert.c
+  CC      nvic.c
+  CC      assert.c
+  CC      ccs.c
+  CC      sync.c
+  CC      sync.c
+  CC      dwt.c
+  CC      dwt.c
+  CC      gpio.c
+  AR      libopencm3_swm050.a
+  AR      libopencm3_vf6xx.a
+  CC      memctl.c
+  CC      usart.c
+  CC      vector.c
+  CC      systick.c
+  CC      scb.c
+  CC      nvic.c
+  CC      assert.c
+  CC      sync.c
+  CC      dwt.c
+  AR      libopencm3_pac55xx.a
+[0m
+[0m$ [0mmake -C examples/stm32/f4/stm32f4-discovery/usart_irq OPENCM3_DIR=../../../../../libopencm3 clean all
+[0m
+[0m$ [0mls
+Makefile
+README.md
+usart_irq.c
+usart_irq.d
+usart_irq.elf
+usart_irq.map
+usart_irq.o
+[0m
+Root cause fixed: the STM32F4 Discovery linker script had an incorrect flash size, which caused `region 'rom' overflowed` at link time.
+
+### What was wrong
+In:
+
+`firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld`
+
+the ROM region was set to:
+
+- `LENGTH = 4K` (incorrect)
+
+for an STM32F407VG target that has 1 MB flash.
+
+### Fix applied
+Updated ROM size to:
+
+- `LENGTH = 1024K` (correct)
+
+### Verification
+Built a concrete target after the fix:
+
+- `examples/stm32/f4/stm32f4-discovery/usart_irq`
+
+Build now links successfully and produces:
+
+- `usart_irq.elf`
+- `usart_irq.map`
+
+This confirms the overflow was caused by linker memory layout corruption (not source code growth), and is now resolved.

@@ -1,0 +1,94 @@
+[0m
+> code · Auto
+[0m
+[0m$ [0mgit status --short
+D pilot/diagrams/architecture.dot
+ D pilot/diagrams/architecture.png
+ D pilot/figure.png
+ D pilot/observations.md
+ D pilot/run_log.csv
+ D pilot/summary.md
+ D recon/CODE_MAP.md
+ D recon/DEFECT_CANDIDATES.md
+ D recon/HYDRON_PROMPTS.md
+ D recon/PLATFORM.md
+ D recon/ground_truth.md
+ D renode/echo_test.py
+ D renode/usart_irq_test.resc
+?? ../.blind_test_stash.54624/
+?? scripts/
+?? transcripts/N1_debug.log
+?? transcripts/N3_debug.log
+?? transcripts/N4_debug.log
+?? transcripts/N5_debug.log
+?? transcripts/T1_debug.log
+?? transcripts/T3_debug.log
+?? transcripts/T4_debug.log
+?? transcripts/U1_debug.log
+?? transcripts/U3_debug.log
+?? transcripts/U4_debug.log
+?? transcripts/U5_debug.log
+?? transcripts/X1_debug.log
+?? transcripts/X3_debug.log
+[0m
+[0m✱ [0mGlob "**/*"[90m in . · 100 matches[0m
+[0m→ [0mRead .
+[0m✱ [0mGrep "LED|led|GPIOD|GPIO[Dd].*12|blink"[90m in firmware · 0 matches[0m
+[0m✱ [0mGlob "**/main.c"[90m in firmware · 0 matches[0m
+[0m→ [0mRead firmware
+[0m→ [0mRead scripts/run_blind_test.sh
+[0m✱ [0mGlob "**/*stm32f4*/*.{c,h,Makefile,mk}"[90m in firmware/libopencm3-examples/examples · 0 matches[0m
+[0m
+[0m$ [0mgit status --short
+M examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+[0m
+[0m$ [0mgit diff -- examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+diff --git a/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c b/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+index 431a9c0..5cdfadd 100644
+--- a/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
++++ b/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+@@ -27,7 +27,6 @@ static void gpio_setup(void)
+ 	/* Manually: */
+ 	// RCC_AHB1ENR |= RCC_AHB1ENR_IOPDEN;
+ 	/* Using API functions: */
+-	rcc_periph_clock_enable(RCC_GPIOD);
+ 
+ 	/* Set GPIO12 (in GPIO port D) to 'output push-pull'. */
+ 	/* Manually: */
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+@@ -26,8 +26,9 @@
+ /* Enable GPIOD clock. */
+ /* Manually: */
+ // RCC_AHB1ENR |= RCC_AHB1ENR_IOPDEN;
+ /* Using API functions: */
++rcc_periph_clock_enable(RCC_GPIOD);
+ 
+ /* Set GPIO12 (in GPIO port D) to 'output push-pull'. */
+ /* Manually: */
+ // GPIOD_CRH = (GPIO_CNF_OUTPUT_PUSHPULL << (((8 - 8) * 4) + 2));
+
+[0m
+[0m$ [0mgit diff -- examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+Root cause fixed in:
+
+`firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c`
+
+### Root cause
+The GPIOD peripheral clock enable call was missing from `gpio_setup()`.  
+Without enabling `RCC_GPIOD`, writes to `GPIOD` configuration/output registers have no effect, so LED pin PD12 never toggles and the on-board LED stays off permanently.
+
+### Fix applied
+Reintroduced the clock enable line before GPIO configuration:
+
+```c
+rcc_periph_clock_enable(RCC_GPIOD);
+```
+
+This restores proper GPIO initialization and allows PD12 to toggle as intended.

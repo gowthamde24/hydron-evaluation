@@ -16,9 +16,9 @@ digraph HydronEvaluation {
     }
 
     subgraph cluster_target {
-        label="Target Under Test";
+        label="Targets Under Test";
         style="rounded,filled"; color="#e8f0d8"; fontsize=11;
-        Firmware [label="usart_irq.c\n(libopencm3, real OSS,\npinned commit)", fillcolor="#ffffff", color="#5a8f3c"];
+        Firmware [label="5 real example programs\n(libopencm3, real OSS,\npinned commit)", fillcolor="#ffffff", color="#5a8f3c"];
     }
 
     subgraph cluster_tools {

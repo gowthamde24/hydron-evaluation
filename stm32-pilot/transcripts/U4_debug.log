@@ -1,0 +1,100 @@
+[0m
+> code · Auto
+[0m
+[0m✱ [0mGlob "**/*"[90m in . · 100 matches[0m
+[0m
+[0m$ [0mgit status --short
+D pilot/diagrams/architecture.dot
+ D pilot/diagrams/architecture.png
+ D pilot/figure.png
+ D pilot/observations.md
+ D pilot/run_log.csv
+ D pilot/summary.md
+ D recon/CODE_MAP.md
+ D recon/DEFECT_CANDIDATES.md
+ D recon/HYDRON_PROMPTS.md
+ D recon/PLATFORM.md
+ D recon/ground_truth.md
+ D renode/echo_test.py
+ D renode/usart_irq_test.resc
+?? ../.blind_test_stash.49900/
+?? scripts/
+?? transcripts/N1_debug.log
+?? transcripts/N3_debug.log
+?? transcripts/N4_debug.log
+?? transcripts/T1_debug.log
+?? transcripts/T3_debug.log
+?? transcripts/U1_debug.log
+?? transcripts/U3_debug.log
+?? transcripts/U4_debug.log
+?? transcripts/X1_debug.log
+[0m
+[0m✱ [0mGlob "**/*.{c,h,ld,mk,Makefile}"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "firmware/**/*.c"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "firmware/**/*.h"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/Makefile"[90m in . · 0 matches[0m
+[0m→ [0mRead .
+[0m→ [0mRead firmware
+[0m→ [0mRead scripts
+[0m✱ [0mGrep "USART2|usart2|USART_2|usart"[90m in firmware/libopencm3-examples · 1083 matches[0m
+[0m→ [0mRead scripts/run_blind_test.sh
+[0m
+[0m$ [0mgit status --short
+M examples/stm32/f4/stm32f4-discovery/button/button.c
+ M examples/stm32/f4/stm32f4-discovery/usart/usart.c
+[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart/usart.c
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/button/button.c
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart/usart.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart/usart.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart/usart.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart/usart.c
+@@ -53,10 +53,10 @@
+ 
+ 	/* Setup GPIO pins for USART2 transmit. */
+ 	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO2);
+ 
+-	/* Setup USART2 TX pin as alternate function. */
+-	gpio_set_af(GPIOA, GPIO_AF6, GPIO2);
++	/* Route USART2_TX onto PA2 (AF7 on STM32F4). */
++	gpio_set_af(GPIOA, GPIO_AF7, GPIO2);
+ }
+ 
+ int main(void)
+ {
+
+[0m
+[0m$ [0mgit diff -- examples/stm32/f4/stm32f4-discovery/usart/usart.c
+diff --git a/examples/stm32/f4/stm32f4-discovery/usart/usart.c b/examples/stm32/f4/stm32f4-discovery/usart/usart.c
+index a0fa9d5..2650ff6 100644
+--- a/examples/stm32/f4/stm32f4-discovery/usart/usart.c
++++ b/examples/stm32/f4/stm32f4-discovery/usart/usart.c
+@@ -54,7 +54,7 @@ static void gpio_setup(void)
+ 	/* Setup GPIO pins for USART2 transmit. */
+ 	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO2);
+ 
+-	/* Setup USART2 TX pin as alternate function. */
++	/* Route USART2_TX onto PA2 (AF7 on STM32F4). */
+ 	gpio_set_af(GPIOA, GPIO_AF7, GPIO2);
+ }
+[0m
+Root cause found and fixed in `firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart/usart.c`.
+
+### Root cause
+USART2 TX pin `PA2` was configured with the wrong alternate function (`AF6`), which disconnects USART2 from the pin on STM32F4.  
+That produces exactly your symptom: firmware runs (LED blinks), but UART line is completely silent (no bytes at all, not even garbage).
+
+### Fix applied
+Changed GPIO AF selection for `PA2` to USART2’s correct AF:
+
+- **from:** `gpio_set_af(GPIOA, GPIO_AF6, GPIO2);`
+- **to:** `gpio_set_af(GPIOA, GPIO_AF7, GPIO2);`
+
+Also updated the nearby comment to explicitly state `USART2_TX` uses `AF7`.
+
+### Why this matches the observed behavior
+- Clocking and main loop are alive (LED blink proves code execution).
+- `usart_send_blocking()` still executes, but with pin mux wrong, bytes never reach the physical TX pad.
+- Wrong baud would give garbage; wrong AF gives silence.

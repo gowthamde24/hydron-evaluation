@@ -1,0 +1,60 @@
+[0m
+> code · Auto
+[0m
+[0m✱ [0mGlob "**/*X4*"[90m 1 match[0m
+[0m✱ [0mGrep "blink|button|LED|GPIO|HAL_GPIO_ReadPin"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*.c"[90m in . · 0 matches[0m
+[0m→ [0mRead .
+[0m✱ [0mGlob "**/*.c"[90m in firmware · 0 matches[0m
+[0m✱ [0mGlob "**/*.h"[90m in firmware · 0 matches[0m
+[0m→ [0mRead firmware
+[0m→ [0mRead firmware/libopencm3-examples
+[0m✱ [0mGlob "**/*X4*"[90m in firmware/libopencm3-examples · 0 matches[0m
+[0m✱ [0mGrep "button|led|blink|gpio|delay|while"[90m in firmware/libopencm3-examples/examples · 1933 matches[0m
+[0m→ [0mRead transcripts/X4_debug.log
+[0m✱ [0mGlob "**/*x4*"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*X4*"[90m in references · 0 matches[0m
+[0m→ [0mRead references
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/button/button.c
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/button/button.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/button/button.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/button/button.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/button/button.c
+@@ -59,9 +59,9 @@
+ while (1) {
+ 	gpio_toggle(GPIOD, GPIO12);
+ 
+ 	/* Upon button press, blink more slowly. */
+-	if (gpio_get(GPIOA, GPIO1)) {
++	if (gpio_get(GPIOA, GPIO0)) {
+ 		for (i = 0; i < 3000000; i++) {	/* Wait a bit. */
+ 			__asm__("nop");
+ 		}
+ 	}
+
+[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/button/button.c
+Fixed the root cause in:
+
+- `firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/button/button.c`
+
+### Root cause
+The code configures the user button on **PA0**:
+```c
+gpio_mode_setup(GPIOA, GPIO_MODE_INPUT, GPIO_PUPD_NONE, GPIO0);
+```
+but it was reading **PA1** in the blink-rate condition:
+```c
+if (gpio_get(GPIOA, GPIO1)) { ... }
+```
+So the button state was never actually sampled from the connected pin.
+
+### Fix applied
+Changed the readback pin from `GPIO1` to `GPIO0`:
+```c
+if (gpio_get(GPIOA, GPIO0)) {
+```
+
+This makes the slow-blink path activate correctly while the on-board button is held.

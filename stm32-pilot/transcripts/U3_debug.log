@@ -1,0 +1,130 @@
+[0m
+> code · Auto
+[0m
+[0m✱ [0mGlob "**/*.{c,h,cpp,hpp,ld,txt,md}"[90m in . · 0 matches[0m
+[0m✱ [0mGrep "USART2|UART|baud|115200|BRR|APB1|SystemClock|RCC"[90m in . · 0 matches[0m
+[0m
+[0m$ [0mls -la
+total 32
+drwxr-xr-x@  8 gowthamreddys  staff   256 Sep 15 10:15 .
+drwxr-xr-x@ 10 gowthamreddys  staff   320 Sep 15 10:15 ..
+-rw-r--r--@  1 gowthamreddys  staff   507 Sep 13 21:55 .gitignore
+drwxr-xr-x@  4 gowthamreddys  staff   128 Sep 13 18:35 firmware
+drwxr-xr-x@  4 gowthamreddys  staff   128 Sep 13 22:19 references
+drwxr-xr-x@  3 gowthamreddys  staff    96 Sep 15 10:13 scripts
+-rwxr-xr-x@  1 gowthamreddys  staff  9234 Sep 13 23:10 setup.sh
+drwxr-xr-x@ 19 gowthamreddys  staff   608 Sep 15 10:15 transcripts
+[0m
+[0m✱ [0mGlob "**/*"[90m in firmware · 100 matches[0m
+[0m✱ [0mGrep "USART2|UART|baud|115200|BRR|APB1|SystemClock|RCC|clock"[90m in firmware · 0 matches[0m
+[0m✱ [0mGlob "firmware/**/*.c"[90m in . · 0 matches[0m
+[0m✱ [0mGrep "USART2|115200|BRR|usart|uart|rcc_clock_setup|clock_setup"[90m in firmware · 0 matches[0m
+[0m
+[0m$ [0mls -la firmware && ls -la firmware/libopencm3-examples && ls -la scripts && ls -la references
+total 0
+drwxr-xr-x@  4 gowthamreddys  staff  128 Sep 13 18:35 .
+drwxr-xr-x@  8 gowthamreddys  staff  256 Sep 15 10:15 ..
+drwxr-xr-x@ 22 gowthamreddys  staff  704 Sep 13 18:38 libopencm3
+drwxr-xr-x@ 11 gowthamreddys  staff  352 Sep 13 22:31 libopencm3-examples
+total 48
+drwxr-xr-x@ 11 gowthamreddys  staff   352 Sep 13 22:31 .
+drwxr-xr-x@  4 gowthamreddys  staff   128 Sep 13 18:35 ..
+drwxr-xr-x@ 14 gowthamreddys  staff   448 Sep 15 10:14 .git
+-rw-r--r--@  1 gowthamreddys  staff   171 Sep 13 18:35 .gitignore
+-rw-r--r--@  1 gowthamreddys  staff    96 Sep 13 18:35 .gitmodules
+-rw-r--r--@  1 gowthamreddys  staff   242 Sep 13 18:35 .travis.yml
+-rw-r--r--@  1 gowthamreddys  staff  2784 Sep 13 18:35 Makefile
+-rw-r--r--@  1 gowthamreddys  staff  4292 Sep 13 18:35 README.md
+drwxr-xr-x@  8 gowthamreddys  staff   256 Sep 13 22:23 examples
+drwxr-xr-x@  2 gowthamreddys  staff    64 Sep 13 18:35 libopencm3
+drwxr-xr-x@  4 gowthamreddys  staff   128 Sep 13 18:35 scripts
+total 16
+drwxr-xr-x@ 3 gowthamreddys  staff    96 Sep 15 10:13 .
+drwxr-xr-x@ 8 gowthamreddys  staff   256 Sep 15 10:15 ..
+-rwxr-xr-x@ 1 gowthamreddys  staff  6730 Sep 15 10:13 run_blind_test.sh
+total 45512
+drwxr-xr-x@ 4 gowthamreddys  staff       128 Sep 13 22:19 .
+drwxr-xr-x@ 8 gowthamreddys  staff       256 Sep 15 10:15 ..
+-rw-r--r--@ 1 gowthamreddys  staff   8733845 Sep 13 22:19 DS_STM32F405-407.pdf
+-rw-r--r--@ 1 gowthamreddys  staff  14561343 Sep 13 18:46 RM0090.pdf
+[0m
+[0m✱ [0mGlob "**/*usart*.c"[90m in firmware/libopencm3-examples/examples/stm32 · 28 matches[0m
+[0m→ [0mRead scripts/run_blind_test.sh
+[0m
+[0m$ [0mgit status --short
+M examples/stm32/f4/stm32f4-discovery/timer/timer.c
+ M examples/stm32/f4/stm32f4-discovery/usart/usart.c
+[0m
+[0m$ [0mgit diff
+diff --git a/examples/stm32/f4/stm32f4-discovery/timer/timer.c b/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+index 5f09b8b..74b0f5e 100644
+--- a/examples/stm32/f4/stm32f4-discovery/timer/timer.c
++++ b/examples/stm32/f4/stm32f4-discovery/timer/timer.c
+@@ -104,7 +104,7 @@ static void tim_setup(void)
+ 	 * In our case, TIM2 on APB1 is running at double frequency, so this
+ 	 * sets the prescaler to have the timer run at 5kHz
+ 	 */
+-	timer_set_prescaler(TIM2, ((rcc_apb1_frequency * 2) / 5000));
++	timer_set_prescaler(TIM2, ((rcc_apb1_frequency * 2) / 500));
+ 
+ 	/* Disable preload. */
+ 	timer_disable_preload(TIM2);
+diff --git a/examples/stm32/f4/stm32f4-discovery/usart/usart.c b/examples/stm32/f4/stm32f4-discovery/usart/usart.c
+index a0fa9d5..f1ebd80 100644
+--- a/examples/stm32/f4/stm32f4-discovery/usart/usart.c
++++ b/examples/stm32/f4/stm32f4-discovery/usart/usart.c
+@@ -35,7 +35,7 @@ static void clock_setup(void)
+ static void usart_setup(void)
+ {
+ 	/* Setup USART2 parameters. */
+-	usart_set_baudrate(USART2, 115200);
++	usart_set_baudrate(USART2, 9600);
+ 	usart_set_databits(USART2, 8);
+ 	usart_set_stopbits(USART2, USART_STOPBITS_1);
+ 	usart_set_mode(USART2, USART_MODE_TX);
+[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart/usart.c
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart/usart.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart/usart.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart/usart.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart/usart.c
+@@ -34,9 +34,9 @@
+ 
+ static void usart_setup(void)
+ {
+ 	/* Setup USART2 parameters. */
+-	usart_set_baudrate(USART2, 9600);
++	usart_set_baudrate(USART2, 115200);
+ 	usart_set_databits(USART2, 8);
+ 	usart_set_stopbits(USART2, USART_STOPBITS_1);
+ 	usart_set_mode(USART2, USART_MODE_TX);
+ 	usart_set_parity(USART2, USART_PARITY_NONE);
+
+[0m
+[0m$ [0mgit diff -- examples/stm32/f4/stm32f4-discovery/usart/usart.c
+[0m
+[0m$ [0mgit status --short
+M examples/stm32/f4/stm32f4-discovery/timer/timer.c
+[0m
+Root cause found and fixed.
+
+### Root cause
+In `examples/stm32/f4/stm32f4-discovery/usart/usart.c`, the USART2 baud rate was set to **9600** instead of **115200**:
+
+- Defective line: `usart_set_baudrate(USART2, 9600);`
+- Expected for your receiver setup: `115200`
+
+This mismatch causes the receiver to decode bytes at the wrong symbol timing, which appears as persistent garbled output.
+
+### Fix applied
+I updated the USART2 configuration back to 115200:
+
+```c
+usart_set_baudrate(USART2, 115200);
+```
+
+### Current repo state
+The USART defect is fixed.  
+There is still an unrelated local modification in `timer/timer.c` present in your working tree, but it does not affect this USART issue.

@@ -1,0 +1,111 @@
+[0m
+> code · Auto
+[0m
+[0m✱ [0mGlob "**/*"[90m in . · 100 matches[0m
+[0m
+[0m$ [0mgit status --short
+M ../README.md
+ D pilot/diagrams/architecture.dot
+ D pilot/diagrams/architecture.png
+ D pilot/figure.png
+ D pilot/observations.md
+ D pilot/run_log.csv
+ D pilot/summary.md
+ D recon/CODE_MAP.md
+ D recon/DEFECT_CANDIDATES.md
+ D recon/HYDRON_PROMPTS.md
+ D recon/PLATFORM.md
+ D recon/ground_truth.md
+ D renode/echo_test.py
+ D renode/usart_irq_test.resc
+ D transcripts/GenC_OFF.log
+ D transcripts/GenC_ON.log
+ D transcripts/GenD_OFF.log
+ D transcripts/GenD_ON.log
+ D transcripts/S1_debug.log
+ D transcripts/S2_debug.log
+ D transcripts/S3_debug.log
+ D transcripts/S4_debug.log
+ D transcripts/S5_debug.log
+ D transcripts/capability_tests/A1_identify_only.log
+ D transcripts/capability_tests/A3_execute_only.log
+ D transcripts/capability_tests/B_no_bug_control.log
+?? ../.blind_test_stash.74848/
+?? ../.blind_test_transcripts.74848/
+?? results/
+?? scripts/
+?? transcripts/U2_debug.log
+[0m
+[0m$ [0mgit branch --show-current
+main
+[0m
+[0m→ [0mRead transcripts/U2_debug.log
+[0m✱ [0mGlob "**/*.ld"[90m in firmware · 0 matches[0m
+[0m✱ [0mGlob "**/Makefile"[90m in firmware · 0 matches[0m
+[0m✱ [0mGlob "**/*.ld"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/Makefile"[90m in . · 0 matches[0m
+[0m→ [0mRead .
+[0m→ [0mRead firmware
+[0m→ [0mRead firmware/libopencm3-examples
+[0m✱ [0mGlob "**/*.ld"[90m in firmware/libopencm3-examples/examples · 38 matches[0m
+[0m✱ [0mGrep "MEMORY|rom|ROM"[90m in firmware/libopencm3-examples/examples · 88 matches[0m
+[0m✱ [0mGrep "region [`']rom|overflowed by|ld returned"[90m in . · 0 matches[0m
+[0m→ [0mRead scripts/run_blind_test.sh
+[0m→ [0mRead setup.sh
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/usart_irq/Makefile
+[0m✗ [0mread failed
+[91m[1mError: [0mFile not found: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/Makefile
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+@@ -22,9 +22,9 @@
+ 
+ /* Define memory regions. */
+ MEMORY
+ {
+-	rom (rx) : ORIGIN = 0x08000000, LENGTH = 4K
++	rom (rx) : ORIGIN = 0x08000000, LENGTH = 1024K
+ 	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 128K
+ }
+ 
+ /* Include the common ld script. */
+
+[0m
+[0m$ [0mmake OPENCM3_DIR=/Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3
+[0m
+[0m$ [0mls
+Makefile
+README.md
+usart_irq.c
+usart_irq.d
+usart_irq.elf
+usart_irq.map
+usart_irq.o
+[0m
+Root cause identified and fixed in the linker script used by `usart_irq`.
+
+### Root cause
+The board linker script was incorrectly configured to only 4 KB of flash:
+
+- File: `firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld`
+- Bad line:
+  - `rom (rx) : ORIGIN = 0x08000000, LENGTH = 4K`
+
+For STM32F407VG on STM32F4 Discovery, flash should be **1024 KB**, not 4 KB.  
+That mismatch causes linker failure with `region 'rom' overflowed`.
+
+### Fix applied
+Updated the ROM size to the correct device flash size:
+
+- `LENGTH = 1024K`
+
+### Verification
+Rebuilt the affected target:
+
+- Directory: `.../stm32f4-discovery/usart_irq`
+- Command: `make OPENCM3_DIR=.../firmware/libopencm3`
+- Result: build now succeeds, produces `usart_irq.elf` and map/object outputs, confirming link-stage overflow is resolved.

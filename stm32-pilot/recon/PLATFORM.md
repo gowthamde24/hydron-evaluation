@@ -103,6 +103,59 @@ can actually be checked, by you or anyone else, not just asserted.
   newlib, causing `stdint.h` resolution failures; switched to ARM's own tarball
   release, extracted to `~/.local/arm-gnu-toolchain`, no root required).
 
+## Expanded campaign: peripheral-capability recon for 4 new targets
+
+Before adding new firmware targets, checked Renode's actual bundled platform
+files (not assumed) — the same discipline that produced the S3/S4 finding
+above, applied up front this time instead of discovered mid-pilot.
+
+- **GPIO output is a real model, not a stub.**
+  `platforms/boards/stm32f4_discovery.repl` wires GPIOD pin 12 to a genuine
+  `Miscellaneous.LED` peripheral (`UserLED: Miscellaneous.LED @ gpioPortD` /
+  `12 -> UserLED@0`). Unlike QEMU's `unimplemented-device` GPIOD stub (see
+  above), this is dynamically, honestly checkable.
+- **GPIO input + the on-board button is a real model.**
+  The same file wires `UserButton: Miscellaneous.Button @ gpioPortA` to
+  `gpioPortA@0` (pin 0) — a genuine injectable input, not a stub. First
+  target in this pilot where a *symptom can be caused* (Press/Release) rather
+  than only *output observed*.
+- **The `button` example (`examples/.../button/button.c`) is polling, not
+  EXTI-interrupt-driven** — confirmed by reading the actual file: it reads
+  `gpio_get(GPIOA, GPIO0)` inside the main `while(1)` loop, with no EXTI or
+  NVIC configuration anywhere. The original plan assumed an EXTI-based
+  button target; corrected after reading the real source rather than forcing
+  an EXTI defect onto code that doesn't have EXTI in it. The button target's
+  defects (`X1`–`X5`, see `DEFECT_CANDIDATES.md`) are GPIO-polling defects,
+  not interrupt-masking ones — X4/X5 are still genuinely dynamic (Press the
+  Renode button, check whether the slow-blink behavior responds).
+- **The `timer` example (`examples/.../timer/timer.c`) does not route TIM2
+  through any GPIO pin or alternate function at all** — confirmed by reading
+  the file: `tim2_isr()` reacts to a compare-match event and calls plain
+  `gpio_toggle()` on the LED pin; there is no `gpio_set_af()` call or PWM
+  hardware-output config anywhere in it. The plan's original "does Renode's
+  real per-channel AF routing make a wrong-PWM-pin defect dynamically
+  provable, unlike USART's S4?" question **could not be tested on this
+  specific example** for that reason — dropped, not silently ignored, and
+  replaced with a genuinely-present bug class this file does have: which
+  timer *event source* is unmasked in `TIMx_DIER` (see `T4` in
+  `DEFECT_CANDIDATES.md`), a real, different silent-failure layer than S5's
+  NVIC-level masking (this one is DIER/event-source-level, one layer lower).
+- **ADC is not modeled for the F405/407/412/429 series in this Renode
+  build.** Confirmed by grep across every `.repl` file in the install — F0,
+  G0, L0-family and H7 boards have ADC models; the F4-Discovery's own
+  `stm32f4.repl` does not define one. `adc-dac-printf` was dropped as a
+  target for this reason — it would only add a second static-only-tier
+  peripheral without a new finding.
+- **Open, not yet resolved:** whether Renode's `GPIOPort.STM32_GPIOPort`
+  model actually gates register behavior on the corresponding
+  `RCC_AHB1ENR` clock-enable bit (RM0090 §6.3.12, p.145) the way real
+  silicon does, or ignores it. This determines whether the "missing
+  clock-enable" defects (`G5`/`X5` in `DEFECT_CANDIDATES.md`) are
+  dynamically provable in Renode or fall into the same static-only tier as
+  S3/S4. Stated as an open question here deliberately — the campaign's own
+  runs answer it, and the answer will be recorded honestly in
+  `DEFECT_CANDIDATES.md` either way, not assumed.
+
 ## The methodological point this makes
 
 What does Hydron's behavior look like when real, checkable ground truth exists,

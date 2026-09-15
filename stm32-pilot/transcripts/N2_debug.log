@@ -1,0 +1,167 @@
+[0m
+> code · Auto
+[0m
+[0m$ [0mls
+firmware
+references
+results
+scripts
+setup.sh
+transcripts
+[0m
+[0m$ [0mls
+libopencm3
+libopencm3-examples
+[0m
+[0m✱ [0mGlob "**/Makefile"[90m in firmware · 0 matches[0m
+[0m✱ [0mGlob "**/*.ld"[90m in firmware · 0 matches[0m
+[0m
+[0m$ [0mls -la
+total 48
+drwxr-xr-x@ 11 gowthamreddys  staff   352 Sep 13 22:31 .
+drwxr-xr-x@  4 gowthamreddys  staff   128 Sep 13 18:35 ..
+drwxr-xr-x@ 14 gowthamreddys  staff   448 Sep 15 10:46 .git
+-rw-r--r--@  1 gowthamreddys  staff   171 Sep 13 18:35 .gitignore
+-rw-r--r--@  1 gowthamreddys  staff    96 Sep 13 18:35 .gitmodules
+-rw-r--r--@  1 gowthamreddys  staff   242 Sep 13 18:35 .travis.yml
+-rw-r--r--@  1 gowthamreddys  staff  2784 Sep 13 18:35 Makefile
+-rw-r--r--@  1 gowthamreddys  staff  4292 Sep 13 18:35 README.md
+drwxr-xr-x@  8 gowthamreddys  staff   256 Sep 13 22:23 examples
+drwxr-xr-x@  2 gowthamreddys  staff    64 Sep 13 18:35 libopencm3
+drwxr-xr-x@  4 gowthamreddys  staff   128 Sep 13 18:35 scripts
+[0m
+[0m$ [0mmake -j4
+######## ERROR ########
+	libopencm3 is not initialized.
+	Please run:
+	$ git submodule init
+	$ git submodule update
+	before running make.
+######## ERROR ########
+make: *** [lib] Error 1
+[0m
+[0m✱ [0mGlob "**/*.ld"[90m in firmware/libopencm3-examples · 38 matches[0m
+[0m✱ [0mGlob "**/Makefile*"[90m in firmware/libopencm3-examples/examples · 100 matches[0m
+[0m✱ [0mGlob "**/*.log"[90m in results · 0 matches[0m
+[0m✱ [0mGrep "overflowed by|region `rom'|region 'rom'|region \"rom\""[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*.map"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/HYDRON.md"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/hydron.json*"[90m in . · 0 matches[0m
+[0m
+[0m$ [0mls -la
+total 32
+drwxr-xr-x@ 10 gowthamreddys  staff   320 Sep 15 11:10 .
+drwxr-xr-x@ 12 gowthamreddys  staff   384 Sep 15 11:10 ..
+-rw-r--r--@  1 gowthamreddys  staff   507 Sep 13 21:55 .gitignore
+drwxr-xr-x@  8 gowthamreddys  staff   256 Sep 15 10:45 .venv
+drwxr-xr-x@  4 gowthamreddys  staff   128 Sep 13 18:35 firmware
+drwxr-xr-x@  4 gowthamreddys  staff   128 Sep 13 22:19 references
+drwxr-xr-x@  9 gowthamreddys  staff   288 Sep 15 10:45 results
+drwxr-xr-x@  3 gowthamreddys  staff    96 Sep 15 10:48 scripts
+-rwxr-xr-x@  1 gowthamreddys  staff  9234 Sep 13 23:10 setup.sh
+drwxr-xr-x@  3 gowthamreddys  staff    96 Sep 15 11:10 transcripts
+[0m
+[0m$ [0mgit status --short
+D pilot/diagrams/architecture.dot
+ D pilot/diagrams/architecture.png
+ D pilot/figure.png
+ D pilot/observations.md
+ D pilot/run_log.csv
+ D pilot/summary.md
+ D recon/CODE_MAP.md
+ D recon/DEFECT_CANDIDATES.md
+ D recon/HYDRON_PROMPTS.md
+ D recon/PLATFORM.md
+ D recon/ground_truth.md
+ D renode/echo_test.py
+ D renode/usart_irq_test.resc
+ D transcripts/GenC_OFF.log
+ D transcripts/GenC_ON.log
+ D transcripts/GenD_OFF.log
+ D transcripts/GenD_ON.log
+ D transcripts/S1_debug.log
+ D transcripts/S2_debug.log
+ D transcripts/S3_debug.log
+ D transcripts/S4_debug.log
+ D transcripts/S5_debug.log
+ D transcripts/capability_tests/A1_identify_only.log
+ D transcripts/capability_tests/A3_execute_only.log
+ D transcripts/capability_tests/B_no_bug_control.log
+?? ../.blind_test_stash.62040/
+?? ../.blind_test_transcripts.62040/
+?? results/
+?? scripts/
+?? transcripts/N2_debug.log
+[0m
+[0m✱ [0mGlob "**/*N2*"[90m in . · 1 match[0m
+[0m✱ [0mGlob "**/*.sh"[90m in scripts · 1 match[0m
+[0m✱ [0mGlob "**/Makefile"[90m in scripts · 0 matches[0m
+[0m→ [0mRead transcripts/N2_debug.log
+[0m→ [0mRead scripts/run_blind_test.sh
+[0m
+[0m$ [0mgit status --short
+M examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+[0m
+[0m$ [0mgit submodule status
+-88e91c9a7cced8096c53fb942dcff1d7bdf6c91b libopencm3
+[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+[0m
+[0m$ [0mgit diff -- examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+diff --git a/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld b/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+index c72a9bf..489f48d 100644
+--- a/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
++++ b/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+@@ -23,7 +23,7 @@
+ /* Define memory regions. */
+ MEMORY
+ {
+-	rom (rx) : ORIGIN = 0x08000000, LENGTH = 1024K
++	rom (rx) : ORIGIN = 0x08000000, LENGTH = 4K
+ 	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 128K
+ }
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+@@ -22,9 +22,9 @@
+ 
+ /* Define memory regions. */
+ MEMORY
+ {
+-	rom (rx) : ORIGIN = 0x08000000, LENGTH = 4K
++	rom (rx) : ORIGIN = 0x08000000, LENGTH = 1024K
+ 	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 128K
+ }
+ 
+ /* Include the common ld script. */
+
+[0m
+[0m$ [0mgit diff -- examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+[0m
+[0m$ [0mgit status --short
+Root cause identified and fixed.
+
+### What caused the link failure
+In `firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld`, the flash (`rom`) region size had been changed from:
+
+- `LENGTH = 1024K` (correct for STM32F407VG)
+
+to
+
+- `LENGTH = 4K` (incorrect)
+
+That forces the linker to place `.text/.rodata` into only 4 KB of flash, which directly triggers the `rom region overflowed` link error even when source files are unchanged.
+
+### Fix applied
+Restored the linker script to the correct flash size:
+
+- `rom (rx) : ORIGIN = 0x08000000, LENGTH = 1024K`
+
+### Validation
+- `git diff` for that linker script is now clean.
+- `git status --short` inside `firmware/libopencm3-examples` is clean (no pending changes).
+
+This resolves the linker overflow root cause by restoring correct memory map metadata.
