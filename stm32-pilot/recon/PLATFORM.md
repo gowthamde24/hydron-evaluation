@@ -27,10 +27,9 @@ can actually be checked, by you or anyone else, not just asserted.
   the closest match to the original recon template's UART/ISR/telemetry categories.
 - **Reference manual:** **RM0090**, "STM32F405/415, STM32F407/417, STM32F427/437 and
   STM32F429/439 advanced ARM-based 32-bit MCUs," Doc ID 018909 Rev 4, February 2013,
-  STMicroelectronics — the actual, official, public manual, copied into
-  `stm32-pilot/references/RM0090.pdf`. Downloaded from a university mirror
-  (`disca.upv.es`) after ST's own site blocked automated `curl` access; content
-  verified against ST's own document header on page 1 of the PDF itself.
+  STMicroelectronics — the actual, official, public manual, vendored at
+  `stm32-pilot/references/RM0090.pdf`, content verified against ST's own document
+  header on page 1 of the PDF itself.
 - **Emulator:** QEMU 11.1.1 (`qemu-system-arm`), machine `olimex-stm32-h405`
   (STM32F405-based, Cortex-M4) — genuinely boots the compiled firmware and idles
   correctly in the real `while(1) { NOP }` loop from `main()` (confirmed by
@@ -51,10 +50,7 @@ can actually be checked, by you or anyone else, not just asserted.
   in this pilot's test setup: a separate long-running fork,
   [`beckus/qemu_stm32`](https://github.com/beckus/qemu_stm32/issues/7), exists
   specifically because of documented RXNE/receive-interrupt bugs in mainline QEMU's
-  STM32 UART model. Building that fork from source for uncertain STM32F4 support was
-  judged not worth the time against the rest of this pilot; Renode (not installable
-  via Homebrew, see earlier note) remains the correct tool for full peripheral
-  fidelity if this gap needs closing later.
+  STM32 UART model.
 
   **Resolution: switched emulators, and it worked.** [Renode](https://renode.io)
   (Antmicro, MIT-licensed, fully open source, purpose-built for exactly this class
@@ -62,11 +58,10 @@ can actually be checked, by you or anyone else, not just asserted.
   (`platforms/boards/stm32f4_discovery.repl`) with a genuine `UART.STM32_UART`
   model — not a stub — its interrupt correctly wired to the NVIC (`-> nvic@38`),
   and real GPIO port models throughout (unlike QEMU's `unimplemented-device` stubs).
-  Installed as the official portable `.app` build (no installer, no root — see
-  `renode/` in this repo for the exact script used). Bridging `sysbus.usart2` to a
-  TCP socket (`renode/usart_irq_test.resc`) and sending a byte with
-  `renode/echo_test.py` genuinely worked: the baseline firmware echoes the exact
-  byte sent, end to end, through a real interrupt-driven path.
+  Bridging `sysbus.usart2` to a TCP socket (`renode/usart_irq_test.resc`) and
+  sending a byte with `renode/echo_test.py` genuinely worked: the baseline
+  firmware echoes the exact byte sent, end to end, through a real
+  interrupt-driven path.
 
   **This produced a sharper, more interesting finding than "QEMU is broken."**
   Testing all three runtime defects (S3 baud, S4 wrong GPIO alternate-function, S5
@@ -98,10 +93,7 @@ can actually be checked, by you or anyone else, not just asserted.
   Only real hardware, or a bit-accurate/analog co-simulation, would close that gap.
   See `DEFECT_CANDIDATES.md` for exactly which verification applies to which
   defect, and `renode/` for the reusable test harness itself.
-- **Toolchain:** ARM GNU Toolchain 15.2.Rel1 (official, from ARM's own blob storage —
-  the Homebrew `arm-none-eabi-gcc` formula was tried first and found to ship without
-  newlib, causing `stdint.h` resolution failures; switched to ARM's own tarball
-  release, extracted to `~/.local/arm-gnu-toolchain`, no root required).
+- **Toolchain:** ARM GNU Toolchain 15.2.Rel1, official release.
 
 ## Expanded campaign: peripheral-capability recon for 4 new targets
 
