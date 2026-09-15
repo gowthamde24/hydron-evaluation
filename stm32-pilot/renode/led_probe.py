@@ -2,13 +2,13 @@
 """Polls the running Renode instance's monitor (TCP port 4567, opened by
 `renode --disable-gui -P 4567 miniblink_test.resc`) for GPIOD's ODR register
 value, several times over a few seconds, and reports whether bit 12 (the
-on-board LED pin, PD12) was ever observed both set and clear — i.e. whether
-the LED is genuinely toggling — or stuck at one value the whole time.
+on-board LED pin, PD12) was ever observed both set and clear - i.e. whether
+the LED is genuinely toggling - or stuck at one value the whole time.
 
 How this fits together:
   miniblink_test.resc (run separately, first) boots the firmware inside
   Renode. Unlike usart_irq's UART bridge, there's no byte-level peripheral
-  bridge for GPIO in this setup — instead this script talks to Renode's own
+  bridge for GPIO in this setup - instead this script talks to Renode's own
   monitor console directly (exposed as a plain TCP/telnet-ish socket by the
   `-P 4567` flag) and issues real `sysbus ReadDoubleWord <addr>` commands,
   the same commands a human would type interactively.
@@ -74,19 +74,19 @@ def main(samples=16, interval=0.3, port=4567):
 
     led_states = {1 if (v & LED_BIT) else 0 for v in values if v is not None}
     if None in values and len(led_states) == 0:
-        print("VERDICT: ALL READS FAILED — could not observe GPIOD ODR at all.")
+        print("VERDICT: ALL READS FAILED - could not observe GPIOD ODR at all.")
         return 2
     if led_states == {0, 1}:
-        print("VERDICT: TOGGLING — LED bit (PD12) observed both set and clear across samples.")
+        print("VERDICT: TOGGLING - LED bit (PD12) observed both set and clear across samples.")
         return 0
     elif led_states == {0}:
-        print("VERDICT: STUCK LOW — LED bit (PD12) never observed set across samples.")
+        print("VERDICT: STUCK LOW - LED bit (PD12) never observed set across samples.")
         return 1
     elif led_states == {1}:
-        print("VERDICT: STUCK HIGH — LED bit (PD12) never observed clear across samples.")
+        print("VERDICT: STUCK HIGH - LED bit (PD12) never observed clear across samples.")
         return 1
     else:
-        print(f"VERDICT: UNEXPECTED — observed states {led_states}")
+        print(f"VERDICT: UNEXPECTED - observed states {led_states}")
         return 3
 
 

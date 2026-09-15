@@ -18,7 +18,7 @@ that a static .resc script can't express.
 How it fits together:
   1. Launches `renode --disable-gui -P <port> button_test.resc` as a
      subprocess (button_test.resc loads the platform description and the ELF
-     given by the $elf variable, then stops — no `start`, this script drives
+     given by the $elf variable, then stops - no `start`, this script drives
      execution itself).
   2. Connects to the monitor port and, for each of "released" and "held",
      repeatedly calls `emulation RunFor "0.02"` (20ms of simulated time) and
@@ -36,11 +36,10 @@ Expected output on correctly-working (baseline) firmware:
                                               loop added only when held)
 
 Expected output with X4 (gpio_get polls GPIO1 instead of GPIO0, so the real
-GPIOA0 button has zero effect) or X5 (GPIOA's peripheral clock never enabled)
-seeded: RELEASED and HELD toggle counts equal (or, for X5, whatever Renode's
-GPIO model actually does when unclocked - this is the open question
-DEFECT_CANDIDATES.md flags; this script's job is to report the real observed
-numbers, not assume the answer).
+GPIOA0 button has zero effect) seeded: RELEASED and HELD toggle counts
+equal. X5 (GPIOA's peripheral clock never enabled) produces no observable
+difference either, since Renode's GPIO model does not gate on the
+clock-enable bit; see DEFECT_CANDIDATES.md.
 """
 import socket
 import subprocess

@@ -31,6 +31,6 @@ $elf?=@/tmp/timer_T4_defect.elf
 
 sysbus LoadELF $elf
 
-# Actually starts CPU execution — without this, the ELF is loaded but the
+# Actually starts CPU execution - without this, the ELF is loaded but the
 # emulated core never runs, and GPIOD's ODR would never change either way.
 start

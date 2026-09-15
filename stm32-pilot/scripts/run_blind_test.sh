@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# run_blind_test.sh — Blind-test hygiene automation.
+# run_blind_test.sh - Blind-test hygiene automation.
 #
 # Stashes recon/, pilot/, renode/, README.md, and prior transcripts out of
 # the project before invoking Hydron, so it investigates from the symptom
@@ -23,10 +23,10 @@
 #
 # What it does, in order:
 #   1. Verifies the defect has already been seeded (git status must show a
-#      real diff) — refuses to run a "blind" test against an unmodified
+#      real diff) - refuses to run a "blind" test against an unmodified
 #      working tree, since that's not a test of anything
 #   2. Moves recon/, pilot/, renode/, and README.md out of the project to a
-#      sibling temp directory (NOT /tmp — a sibling of stm32-pilot/, so it
+#      sibling temp directory (NOT /tmp - a sibling of stm32-pilot/, so it
 #      survives if /tmp is cleared mid-run and stays easy to find if this
 #      script is interrupted)
 #   3. Runs `hydron run --auto` non-interactively, writing raw output to the
@@ -62,7 +62,7 @@ if [ -f "$TRANSCRIPT" ]; then
 fi
 
 # firmware/libopencm3 and firmware/libopencm3-examples are each their OWN
-# nested git clones (see setup.sh) — invisible to a `git diff` run from
+# nested git clones (see setup.sh) - invisible to a `git diff` run from
 # PILOT_ROOT, which stops at the nested .git boundary. Every seeded defect
 # in this campaign lives inside firmware/libopencm3-examples specifically
 # (see DEFECT_CANDIDATES.md), so the dirty-check has to run inside THAT
@@ -120,7 +120,7 @@ acquire_lock() {
 			mtime=$(stat -f %m "$LOCK_DIR" 2>/dev/null || echo "$now")
 			age=$(( now - mtime ))
 			if [ "$age" -gt 1200 ]; then
-				echo "WARNING: lock at $LOCK_DIR is >20min old — assuming its" >&2
+				echo "WARNING: lock at $LOCK_DIR is >20min old - assuming its" >&2
 				echo "         holder crashed, and stealing it." >&2
 				rmdir "$LOCK_DIR" 2>/dev/null || true
 				continue
@@ -148,7 +148,7 @@ restore_stash() {
 	fi
 	# Splice this run's own new transcript (the only thing that can exist in
 	# the temporary empty transcripts/ dir) into the real one, THEN restore
-	# the real one — order matters, otherwise the new file is silently lost
+	# the real one - order matters, otherwise the new file is silently lost
 	# when the temporary directory is removed.
 	if [ -d "$TRANSCRIPTS_STASH_DIR" ]; then
 		if [ -d "$PILOT_ROOT/transcripts" ]; then
@@ -160,7 +160,7 @@ restore_stash() {
 	fi
 	release_lock
 }
-# Runs on normal exit AND on interrupt/error — the whole point is that a
+# Runs on normal exit AND on interrupt/error - the whole point is that a
 # killed or crashed run must never leave Hydron able to read the answer key
 # on the *next* invocation because a restore step got skipped.
 trap restore_stash EXIT INT TERM
@@ -170,7 +170,7 @@ echo "concurrent target's stash/hydron-run/restore) ..." >&2
 acquire_lock
 
 if [ -d "$STASH_DIR" ]; then
-	echo "ERROR: $STASH_DIR already exists — a previous run may not have cleaned up." >&2
+	echo "ERROR: $STASH_DIR already exists - a previous run may not have cleaned up." >&2
 	echo "       Inspect it by hand before continuing." >&2
 	exit 1
 fi
@@ -184,7 +184,7 @@ for item in "${STASH_ITEMS[@]}"; do
 done
 
 # Swap the real transcripts/ (every prior run's full narrated diagnosis) out
-# for a fresh, empty one — this run can still write its own new transcript
+# for a fresh, empty one - this run can still write its own new transcript
 # into it, but cannot read or grep any other run's. Spliced back together in
 # restore_stash above.
 if [ -d "$PILOT_ROOT/transcripts" ]; then
