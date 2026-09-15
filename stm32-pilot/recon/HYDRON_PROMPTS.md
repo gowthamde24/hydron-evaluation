@@ -202,7 +202,8 @@ defect from U4 — do not assume it's the same line or the same mechanism.)
 ### No-bug control, `B2`/`B3` (fabricated, physically-impossible symptom on genuinely working code)
 
 ```
-B2 (miniblink, unmodified/working): The on-board LED lights up once at power-on and
+B2 (miniblink, unmodified/working; board named explicitly, see the F1 note above):
+On the STM32F4 Discovery board, the on-board LED lights up once at power-on and
 then stays solid on forever after that — it never blinks or turns off again. Find
 and fix the root cause.
 

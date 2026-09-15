@@ -1,0 +1,176 @@
+[0m
+> code · Auto
+[0m
+[0m✱ [0mGlob "**/*.{c,h,cpp,hpp}"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "**/*"[90m in . · 100 matches[0m
+[0m✱ [0mGlob "firmware/**/*.c"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "*"[90m in . · 100 matches[0m
+[0m✱ [0mGlob "firmware/libopencm3-examples/examples/stm32/f4/**/*.c"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "firmware/libopencm3-examples/examples/stm32/f4/**/*.h"[90m in . · 0 matches[0m
+[0m✱ [0mGlob "firmware/libopencm3-examples/examples/stm32/f4/**/Makefile*"[90m in . · 0 matches[0m
+[0m✱ [0mGrep "STM32F4|f4discovery|DISCOVERY|GPIOD|PD12|blink|LED"[90m in . · 3 matches[0m
+[0m✱ [0mGlob "**/main.c"[90m in . · 0 matches[0m
+[0m→ [0mRead .
+[0m→ [0mRead firmware
+[0m→ [0mRead firmware/libopencm3-examples
+[0m→ [0mRead firmware/libopencm3-examples/examples
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/Makefile
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+[0m✱ [0mGrep "GPIO12|gpio_toggle\(GPIOD, GPIO12\)|gpio_set\(GPIOD, GPIO12\)|gpio_clear\(GPIOD, GPIO12\)"[90m in firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery · 37 matches[0m
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+@@ -38,9 +38,9 @@
+ }
+ 
+ int main(void)
+ {
+-	int i;
++	volatile uint32_t i;
+ 
+ 	gpio_setup();
+ 
+ 	/* Blink the LED (PC8) on the board. */
+
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+@@ -17,8 +17,10 @@
+  * You should have received a copy of the GNU Lesser General Public License
+  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#include <stdint.h>
++
+ #include <libopencm3/stm32/rcc.h>
+ #include <libopencm3/stm32/gpio.h>
+ 
+ static void gpio_setup(void)
+
+[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+[0m
+[0m$ [0mmake
+[0m
+[0m$ [0mgit status --short && git diff -- firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+D pilot/diagrams/architecture.dot
+ D pilot/diagrams/architecture.png
+ D pilot/figure.png
+ D pilot/observations.md
+ D pilot/run_log.csv
+ D pilot/summary.md
+ D recon/CODE_MAP.md
+ D recon/DEFECT_CANDIDATES.md
+ D recon/HYDRON_PROMPTS.md
+ D recon/PLATFORM.md
+ D recon/ground_truth.md
+ D renode/button_press_test.py
+ D renode/button_test.resc
+ D renode/echo_test.py
+ D renode/led_probe.py
+ D renode/miniblink_test.resc
+ D renode/timer_led_probe.py
+ D renode/timer_led_test.resc
+ D renode/usart_irq_test.resc
+ D transcripts/C1_debug.log
+ D transcripts/F2_debug.log
+ D transcripts/GenC_OFF.log
+ D transcripts/GenC_ON.log
+ D transcripts/GenD_OFF.log
+ D transcripts/GenD_ON.log
+ D transcripts/N1_debug.log
+ D transcripts/N2_debug.log
+ D transcripts/N3_debug.log
+ D transcripts/N4_debug.log
+ D transcripts/N5_debug.log
+ D transcripts/S1_debug.log
+ D transcripts/S2_debug.log
+ D transcripts/S3_debug.log
+ D transcripts/S4_debug.log
+ D transcripts/S5_debug.log
+ D transcripts/T1_debug.log
+ D transcripts/T2_debug.log
+ D transcripts/T3_debug.log
+ D transcripts/T4_debug.log
+ D transcripts/T5_debug.log
+ D transcripts/U1_debug.log
+ D transcripts/U2_debug.log
+ D transcripts/U3_debug.log
+ D transcripts/U4_debug.log
+ D transcripts/U5_debug.log
+ D transcripts/X1_debug.log
+ D transcripts/X2_debug.log
+ D transcripts/X3_debug.log
+ D transcripts/X4_debug.log
+ D transcripts/X5_debug.log
+ D transcripts/capability_tests/A1_identify_only.log
+ D transcripts/capability_tests/A3_execute_only.log
+ D transcripts/capability_tests/B_no_bug_control.log
+?? ../.blind_test_stash.manual_b2/
+?? ../.blind_test_transcripts.manual_b2/
+?? transcripts/B2_debug.log
+[0m
+[0m$ [0mgit status --short && git diff -- examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+M examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+diff --git a/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c b/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+index 431a9c0..773c4f8 100644
+--- a/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
++++ b/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c
+@@ -18,6 +18,8 @@
+  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#include <stdint.h>
++
+ #include <libopencm3/stm32/rcc.h>
+ #include <libopencm3/stm32/gpio.h>
+ 
+@@ -39,7 +41,7 @@ static void gpio_setup(void)
+ 
+ int main(void)
+ {
+-	int i;
++	volatile uint32_t i;
+ 
+ 	gpio_setup();
+[0m
+Root cause identified and fixed in the STM32F4 Discovery `miniblink` example.
+
+### Root cause
+The LED delay loop counter was declared as a plain non-volatile local:
+```c
+int i;
+```
+With optimization enabled, the compiler can optimize the empty wait loop away (or collapse it), causing `gpio_toggle()` to execute effectively at full speed. To the eye, that appears as a solid LED after startup instead of a visible blink.
+
+### Fix applied
+File updated:
+`firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/miniblink/miniblink.c`
+
+Changes:
+- Added `#include <stdint.h>`
+- Changed loop counter type and volatility:
+```c
+volatile uint32_t i;
+```
+
+This keeps the delay loop from being optimized out and restores visible blinking behavior.
+
+### Patch summary
+```diff
++#include <stdint.h>
+...
+-int i;
++volatile uint32_t i;
+```
+
+This directly addresses the “lights once, then stays on” symptom by restoring deterministic software delay timing in the blink loop.

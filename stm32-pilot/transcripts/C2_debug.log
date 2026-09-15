@@ -1,0 +1,88 @@
+[0m
+> code · Auto
+[0m
+[0m$ [0mls
+firmware
+references
+results
+scripts
+setup.sh
+transcripts
+[0m
+[0m$ [0mls
+libopencm3
+libopencm3-examples
+[0m
+[0m✱ [0mGlob "**/*timer*"[90m in firmware/libopencm3-examples · 100 matches[0m
+[0m✱ [0mGlob "**/stm32f4-discovery/**"[90m in firmware/libopencm3-examples · 68 matches[0m
+[0m
+[0m$ [0mmake clean && make V=1
+Using ../../../../../libopencm3/ path to library
+arm-none-eabi-gcc -Os -std=c99 -ggdb3 -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Wextra -Wshadow -Wimplicit-function-declaration -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes -fno-common -ffunction-sections -fdata-sections  -MD -Wall -Wundef -DSTM32F4 -I../../../../../libopencm3//include  -o timer.o -c timer.c
+arm-none-eabi-gcc --static -nostartfiles -T../stm32f4-discovery.ld -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -ggdb3 -Wl,-Map=timer.map -Wl,--cref -Wl,--gc-sections -L../../../../../libopencm3//lib timer.o -lopencm3_stm32f4 -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group -o timer.elf
+[0m
+[0m$ [0mgit log --oneline -n 8
+15637e2 Update library to latest
+[0m
+[0m$ [0mgit status --short
+M examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+[0m
+[0m$ [0mgit diff -- examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+diff --git a/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld b/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+index c72a9bf..bc19053 100644
+--- a/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
++++ b/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+@@ -28,5 +28,4 @@ MEMORY
+ }
+ 
+ /* Include the common ld script. */
+-INCLUDE cortex-m-generic.ld
+[0m
+[0m→ [0mRead firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+[0m
+[0m← [0mEdit firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+Index: /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+===================================================================
+--- /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
++++ /Users/gowthamreddys/Desktop/hydron-evaluation/stm32-pilot/firmware/libopencm3-examples/examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+@@ -27,5 +27,5 @@
+ 	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 128K
+ }
+ 
+ /* Include the common ld script. */
+-
++INCLUDE cortex-m-generic.ld
+
+[0m
+[0m$ [0mmake clean && make V=1
+Using ../../../../../libopencm3/ path to library
+arm-none-eabi-gcc -Os -std=c99 -ggdb3 -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Wextra -Wshadow -Wimplicit-function-declaration -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes -fno-common -ffunction-sections -fdata-sections  -MD -Wall -Wundef -DSTM32F4 -I../../../../../libopencm3//include  -o timer.o -c timer.c
+arm-none-eabi-gcc --static -nostartfiles -T../stm32f4-discovery.ld -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -ggdb3 -Wl,-Map=timer.map -Wl,--cref -Wl,--gc-sections -L../../../../../libopencm3//lib timer.o -lopencm3_stm32f4 -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group -o timer.elf
+[0m
+Root cause identified and fixed.
+
+### What broke
+The timer example itself was not the issue.  
+The board-level linker script was modified:
+
+- File: `examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld`
+- Missing line:
+```ld
+INCLUDE cortex-m-generic.ld
+```
+
+Without that include, link-time symbols/sections from the common linker script are not provided, causing linker failures for targets that use `-T../stm32f4-discovery.ld` (including `timer`).
+
+### Fix applied
+Restored the include at the end of `stm32f4-discovery.ld`:
+```ld
+/* Include the common ld script. */
+INCLUDE cortex-m-generic.ld
+```
+
+### Verification
+Rebuilt timer example with verbose output:
+
+- Command: `make clean && make V=1`
+- Directory: `examples/stm32/f4/stm32f4-discovery/timer`
+- Result: build completes successfully, `timer.elf` links correctly.
