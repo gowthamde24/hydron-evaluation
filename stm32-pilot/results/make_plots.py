@@ -46,6 +46,8 @@ plt.rcParams.update({
     "axes.axisbelow": True,
     "font.size": 10,
     "font.family": "sans-serif",
+    "font.sans-serif": ["Helvetica Neue", "Helvetica", "Arial", "DejaVu Sans"],
+    "axes.titleweight": "medium",
 })
 
 
